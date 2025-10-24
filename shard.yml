@@ -1,0 +1,14 @@
+name: kemal-controller
+version: 0.1.0
+authors:
+  - Hugo Parente Lima <hugo.pl@gmail.com>
+crystal: '>= 1.18.2'
+license: MIT
+dependencies:
+  kemal:
+    github: kemalcr/kemal
+    version: 1.7.2
+
+development_dependencies:
+  spec-kemal:
+    github: kemalcr/spec-kemal

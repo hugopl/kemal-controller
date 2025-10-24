@@ -1,0 +1,134 @@
+require "./spec_helper"
+
+private struct TestController < Kemal::Controller
+  @[Get("/hello")]
+  def hello(name : String)
+    "Hello, #{name}!"
+  end
+
+  @[Post("/hello")]
+  def post_hello(name : String)
+    "Hello, #{name}!"
+  end
+
+  @[Get("/route/:parameter/allowed")]
+  def route_parameter_allowed(parameter : String)
+    "Parameter: #{parameter}"
+  end
+
+  @[Get("/strip", strip: true)]
+  def strip(something : String)
+    something
+  end
+
+  @[Get("/nostrip")]
+  def nostrip(something : String)
+    something
+  end
+
+  @[Post("/named_tuples")]
+  def named_tuples(item : NamedTuple(name: String, age: Int32))
+    "Name: #{item[:name]}, Age: #{item[:age]}"
+  end
+
+  @[Post("/array_of_named_tuples")]
+  def array_of_named_tuples(items : Array(NamedTuple(name: String, age: Int32)))
+    items.map { |item| "Name: #{item[:name]}, Age: #{item[:age]}" }.join(", ")
+  end
+
+  @[Post("/named_tuple_with_array")]
+  def named_tuple_with_array(data : NamedTuple(names: Array(String), scores: Array(Int32)))
+    names = data[:names].join("|")
+    scores = data[:scores].map(&.to_s).join("|")
+    "Names: #{names}, Scores: #{scores}"
+  end
+
+  @[Post("/integers_and_booleans")]
+  def integers_and_booleans(int32 : Int32, int64 : Int64, flag : Bool, flag2 : Bool)
+    "Int32: #{int32}, Int64: #{int64}, Flag: #{flag}, Flag2: #{flag2}"
+  end
+
+  @[Get("/nilable")]
+  def nilable_param(number : Int32?)
+    number.inspect
+  end
+end
+
+describe Kemal::Controller do
+  it "can handle GET request parameters" do
+    get("/hello?name=Crystal")
+    response.body.should eq("Hello, Crystal!")
+  end
+
+  it "can handle POST request parameters" do
+    post("/hello", { {"name", "Crystal"} })
+    response.body.should eq("Hello, Crystal!")
+  end
+
+  it "can handle route parameters" do
+    get("/route/Testing123/allowed")
+    response.body.should eq("Parameter: Testing123")
+  end
+
+  it "can handle named tuples from POST parameters" do
+    post("/named_tuples", { {"item[name]", "Alice"}, {"item[age]", "30"} })
+    response.body.should eq("Name: Alice, Age: 30")
+  end
+
+  it "can handle array of named tuples from POST parameters" do
+    post("/array_of_named_tuples", {
+      {"items[][name]", "Alice"},
+      {"items[][age]", "30"},
+      {"items[][name]", "Bob"},
+      {"items[][age]", "25"},
+    })
+    response.body.should eq("Name: Alice, Age: 30, Name: Bob, Age: 25")
+  end
+
+  it "can handle empty array" do
+    post("/array_of_named_tuples")
+    response.body.should eq("")
+  end
+
+  it "can handle named tuple with array from POST parameters" do
+    post("/named_tuple_with_array", {
+      {"data[names][]", "Alice"},
+      {"data[names][]", "Bob"},
+      {"data[scores][]", "85"},
+      {"data[scores][]", "90"},
+    })
+    response.body.should eq("Names: Alice|Bob, Scores: 85|90")
+  end
+
+  it "can handle integers and booleans from POST parameters" do
+    post("/integers_and_booleans", {
+      {"int32", "42"},
+      {"int64", "1234567890123"},
+      {"flag", "true"},
+      {"flag2", "0"},
+    })
+    response.body.should eq("Int32: 42, Int64: 1234567890123, Flag: true, Flag2: false")
+  end
+
+  it "can handle nilable parameters" do
+    get("/nilable")
+    response.body.should eq("nil")
+
+    get("/nilable?number=100")
+    response.body.should eq("100")
+  end
+
+  pending "can handle default values" do
+    # To be implemented
+  end
+
+  it "does not strip parameters by default" do
+    get("/nostrip?something=%20Crystal%20")
+    response.body.should eq(" Crystal ")
+  end
+
+  it "can strip parameters" do
+    get("/strip?something=%20I%20once%20had%20spaces.%20")
+    response.body.should eq("I once had spaces.")
+  end
+end
