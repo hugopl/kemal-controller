@@ -5,6 +5,8 @@ your web applications, kemal-controller is here to help you with that by
 providing a simple way to declare all your endpoints into controller classes
 where the method parameters will map to GET/PATCH/.../POST/URL parameters automatically.
 
+Online documentation can be found at: <https://hugopl.github.io/kemal-controller/>.
+
 Controllers are structs, so the overhead is minimal and you can still use all
 Kemal features as you would normally do.
 
