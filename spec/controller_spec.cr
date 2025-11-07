@@ -21,6 +21,11 @@ private struct TestController < Kemal::Controller
     something
   end
 
+  @[Get("/strip-nilable", strip: true)]
+  def strip_nilable(something : String?)
+    something.inspect
+  end
+
   @[Get("/nostrip")]
   def nostrip(something : String)
     something
@@ -125,6 +130,14 @@ describe Kemal::Controller do
   it "does not strip parameters by default" do
     get("/nostrip?something=%20Crystal%20")
     response.body.should eq(" Crystal ")
+  end
+
+  it "does strip nilable parameters" do
+    get("/strip-nilable?something=%20Hello%20World%20")
+    response.body.should eq("\"Hello World\"")
+
+    get("/strip-nilable")
+    response.body.should eq("nil")
   end
 
   it "can strip parameters" do

@@ -34,7 +34,7 @@ module Kemal
                   {{ param.name.id }} = {{ type }}.from_www_form({{ param.name.stringify }},  %params)
 
                   {% if ann[:strip] == true %}
-                    {{ param.name.id }} = {{ param.name.id }}.strip
+                    {{ param.name.id }} = {{ param.name.id }}.strip unless {{ param.name.id }}.nil?
                   {% end %}
                 {% end %}
 

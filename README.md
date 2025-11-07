@@ -53,7 +53,7 @@ Default values aren't supported yet, meanwhile use a nilable type and handle the
 
 ### How the parameters are mapped?
 
-It almost like Rails does:
+Kemal-controller interprets the form keys almost like Rails does:
 
 - `item[foo]=bar` becomes `item : NamedTuple(foo : String)`
 - `items[]=1&items[]=2` becomes `items : Array(Int32)`
@@ -71,6 +71,20 @@ It almost like Rails does:
 - Nilable versions of the above types
 
 More types may be added in the future, feel free to open an issue or a PR if you need something specific.
+
+### Stripping parameters
+
+If you need to strip all parameters (like leading/trailing spaces) before they
+reach your controller methods, you can use the `strip` flag on method annotation.
+
+```Crystal
+struct UsersController < Kemal::Controller
+    @[Post("/users", strip: true)]
+    def create(name : String, description : String?)
+      "Creating user with name: '#{name}', description: '#{description}'"
+    end
+end
+```
 
 ## Installation
 
