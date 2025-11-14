@@ -175,4 +175,13 @@ describe Kemal::Controller do
     get("/area51", HTTP::Headers{"Authorization" => "SecretToken"})
     response.body.should eq("You found area 51!")
   end
+
+  it "can print routes" do
+    color_setting = Colorize.enabled?
+    Colorize.enabled = false
+    output = String.build { |str| Kemal.print_routes(str) }
+    output.should start_with("   GET  /area51                    TestController#area51()")
+  ensure
+    Colorize.enabled = color_setting.not_nil!
+  end
 end

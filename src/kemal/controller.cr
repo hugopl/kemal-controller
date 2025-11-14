@@ -1,4 +1,6 @@
 require "./from_www_form"
+require "../ext/route_handler"
+require "./print_routes"
 
 module Kemal
   abstract struct Controller
@@ -20,7 +22,7 @@ module Kemal
             {% if ann %}
               {% verb = http_verb.stringify.split("::").last.upcase %}
               {% url = ann[0] %}
-              Kemal::RouteHandler::INSTANCE.add_route({{ verb }}, {{ url }}) do |ctx|
+              Kemal::RouteHandler::INSTANCE.add_route({{ verb }}, {{ url }}, {{ "#{@type.id}##{method.name}(#{method.args.join(", ").id})" }}) do |ctx|
                 Log.debug do
                   "Processing request for #{{{verb}}} #{ctx.request.path} " \
                   "through #{{{ @type.name.stringify }}}##{{{ method.name.stringify }}}".colorize(:cyan)

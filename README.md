@@ -121,6 +121,32 @@ struct AdminController < Kemal::Controller
 end
 ```
 
+### Printing routes
+
+You can print all registered routes by calling the `Kemal.print_routes` method,
+useful for debugging purposes.
+
+```Crystal
+Kemal.config.extra_options do |parser|
+  parser.on("--routes", "Show all routes") do
+    Kemal.print_routes
+    exit(0)
+  end
+end
+```
+
+On `--routes` your app will print something like:
+
+```
+   GET  /area51                    TestController#area51()
+  POST  /array_of_named_tuples     TestController#array_of_named_tuples(items : Array(NamedTuple(name: String, age: Int32)))
+   GET  /hello                     TestController#hello(name : String)
+  POST  /hello                     TestController#post_hello(name : String)
+   GET  /regular_kemal_route       ?
+
+4 routes
+```
+
 ## Installation
 
 1. Add the dependency to your `shard.yml`:
