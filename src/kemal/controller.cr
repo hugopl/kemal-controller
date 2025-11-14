@@ -33,7 +33,8 @@ module Kemal
                   {% type = param.restriction.resolve %}
                   {{ param.name.id }} = {{ type }}.from_www_form({{ param.name.stringify }},  %params)
 
-                  {% if ann[:strip] == true %}
+                  {% strip = ann[:strip] %}
+                  {% if strip && (strip == true || strip.includes?(param.name.id.symbolize)) %}
                     {{ param.name.id }} = {{ param.name.id }}.strip unless {{ param.name.id }}.nil?
                   {% end %}
                 {% end %}

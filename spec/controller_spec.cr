@@ -26,6 +26,11 @@ private struct TestController < Kemal::Controller
     something.inspect
   end
 
+  @[Get("/strip-specific", strip: %i(strippable1 strippable2))]
+  def strip_specific(strippable1 : String, unstrippable : String, strippable2 : String)
+    "Strippable1: '#{strippable1}', Unstrippable: '#{unstrippable}', Strippable2: '#{strippable2}'"
+  end
+
   @[Get("/nostrip")]
   def nostrip(something : String)
     something
@@ -140,8 +145,13 @@ describe Kemal::Controller do
     response.body.should eq("nil")
   end
 
-  it "can strip parameters" do
+  it "can strip all parameters" do
     get("/strip?something=%20I%20once%20had%20spaces.%20")
     response.body.should eq("I once had spaces.")
+  end
+
+  it "can strip specific parameters" do
+    get("/strip-specific?strippable1=%20First%20&unstrippable=%20 Second %20&strippable2=%20 Third %20")
+    response.body.should eq("Strippable1: 'First', Unstrippable: '  Second  ', Strippable2: 'Third'")
   end
 end

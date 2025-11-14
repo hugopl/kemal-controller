@@ -79,11 +79,18 @@ More types may be added in the future, feel free to open an issue or a PR if you
 If you need to strip all parameters (like leading/trailing spaces) before they
 reach your controller methods, you can use the `strip` flag on method annotation.
 
+To strip specific parameters use an array of symbols instead of true.
+
 ```Crystal
 struct UsersController < Kemal::Controller
     @[Post("/users", strip: true)]
     def create(name : String, description : String?)
       "Creating user with name: '#{name}', description: '#{description}'"
+    end
+
+    @[Get("/users/edit", strip: [:email])]
+    def login(email : String, password : String)
+      "Logging in user with email: '#{email}'"
     end
 end
 ```
