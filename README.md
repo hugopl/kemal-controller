@@ -95,6 +95,32 @@ struct UsersController < Kemal::Controller
 end
 ```
 
+### Authenticated/protected routes
+
+If you need to protect some routes with authentication you must set the `auth`
+flag to true in the method annotation and implement the `authenticate! : Bool`
+method in your controller.
+
+If `authenticate!` returns false the request will be halted and no further
+processing will be done, status code is set to 401 (Unauthorized).
+
+```Crystal
+struct AdminController < Kemal::Controller
+  @[Get("/admin/dashboard", auth: true)]
+  def dashboard
+    "Welcome to the admin dashboard!"
+  end
+
+  private def authenticate! : Bool
+    if !current_user.try(&.current_user.admin?)
+      redirect("/login")
+      return false
+    end
+    true
+  end
+end
+```
+
 ## Installation
 
 1. Add the dependency to your `shard.yml`:

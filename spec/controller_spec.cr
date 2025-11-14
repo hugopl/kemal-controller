@@ -62,6 +62,19 @@ private struct TestController < Kemal::Controller
   def nilable_param(number : Int32?)
     number.inspect
   end
+
+  @[Get("/area51", auth: true)]
+  def area51
+    "You found area 51!"
+  end
+
+  def authenticate! : Bool
+    if request.headers["Authorization"]? != "SecretToken"
+      response.status_code = 401
+      return false
+    end
+    true
+  end
 end
 
 describe Kemal::Controller do
@@ -153,5 +166,13 @@ describe Kemal::Controller do
   it "can strip specific parameters" do
     get("/strip-specific?strippable1=%20First%20&unstrippable=%20 Second %20&strippable2=%20 Third %20")
     response.body.should eq("Strippable1: 'First', Unstrippable: '  Second  ', Strippable2: 'Third'")
+  end
+
+  it "can enforce authentication" do
+    get("/area51")
+    response.status_code.should eq(401)
+
+    get("/area51", HTTP::Headers{"Authorization" => "SecretToken"})
+    response.body.should eq("You found area 51!")
   end
 end

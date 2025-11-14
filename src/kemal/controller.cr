@@ -26,6 +26,15 @@ module Kemal
                   "through #{{{ @type.name.stringify }}}##{{{ method.name.stringify }}}".colorize(:cyan)
                 end
 
+                %controller = {{ @type.id }}.new(ctx)
+
+                {% if ann[:auth] == true %}
+                  if !%controller.authenticate!
+                    ctx.response.status_code = 401
+                    next
+                  end
+                {% end %}
+
                 ctx.response.status_code = {{ verb.id.symbolize }} == :POST ? 201 : 200
 
                 %params = Kemal.parse_www_form(ctx)
@@ -39,7 +48,6 @@ module Kemal
                   {% end %}
                 {% end %}
 
-                %controller = {{ @type.id }}.new(ctx)
                 %controller.{{method.name.id}}({% for param in method.args %}{{ param.name.id }}, {% end %})
               end
             {% end %}
