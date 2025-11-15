@@ -1,10 +1,12 @@
 module Kemal
   class RouteHandler
-    getter route_locations : Hash(Route, String) = Hash(Route, String).new
+    alias RouteMetadata = NamedTuple(location: String, auth: Bool)
 
-    def add_route(method : String, path : String, location : String = "?", &handler : HTTP::Server::Context -> _)
+    getter routes_metadata : Hash(Route, RouteMetadata) = Hash(Route, RouteMetadata).new
+
+    def add_route(method : String, path : String, location : String = "?", auth : Bool = false, &handler : HTTP::Server::Context -> _)
       route = Route.new(method, path, &handler)
-      @route_locations[route] = location
+      @routes_metadata[route] = {location: location, auth: auth}
       add_to_radix_tree(method, path, route)
     end
   end
