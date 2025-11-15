@@ -179,12 +179,12 @@ describe Kemal::Controller do
   it "can print routes" do
     color_setting = Colorize.enabled?
     Colorize.enabled = false
-    Kemal.print_routes
     output = String.build { |str| Kemal.print_routes(str) }
     output.should start_with(
-      "   GET 🔒  /area51                    TestController#area51()\n" \
-      "  POST     /array_of_named_tuples     TestController#array_of_named_tuples(items : Array(NamedTuple(name: String, age: Int32)))\n"
+      "   GET 🔒    /area51                    TestController#area51()\n" \
+      "  POST       /array_of_named_tuples     TestController#array_of_named_tuples(items : Array(NamedTuple(name: String, age: Int32)))\n"
     )
+    output.should contain("   GET    ✂️  /strip                     TestController#strip(something : String)\n")
   ensure
     Colorize.enabled = color_setting.not_nil!
   end

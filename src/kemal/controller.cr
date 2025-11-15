@@ -24,7 +24,7 @@ module Kemal
               {% url = ann[0] %}
               Kemal::RouteHandler::INSTANCE.add_route({{ verb }}, {{ url }},
                                                       {{ "#{@type.id}##{method.name}(#{method.args.join(", ").id})" }},
-                                                       {{ !!ann[:auth] }}) do |ctx|
+                                                       {{ !!ann[:auth] }}, {{ !!ann[:strip] }}) do |ctx|
                 Log.debug do
                   "Processing request for #{{{verb}}} #{ctx.request.path} " \
                   "through #{{{ @type.name.stringify }}}##{{{ method.name.stringify }}}".colorize(:cyan)

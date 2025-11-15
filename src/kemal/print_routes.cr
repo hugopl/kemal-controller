@@ -10,6 +10,8 @@ module Kemal
     routes.each do |route|
       route_metadata = routes_metadata[route]
       auth = route_metadata[:auth] ? "🔒 " : "   "
+      strip = route_metadata[:strip] ? "✂️ " : "  "
+
       if route_metadata[:location] =~ /\A(\w+)#(\w+)(.*)\z/
         class_name = $1
         method = $2
@@ -17,7 +19,7 @@ module Kemal
         location = "#{class_name.colorize.magenta}##{method.colorize.green}#{args}"
       end
       # Max width for an HTTP verb is 6 (DELETE)
-      io.printf("%#{color_control_chars + 6}s #{auth} %-#{max_path_size}s  %s\n", route.method.colorize.blue, route.path.colorize.cyan, location)
+      io.printf("%#{color_control_chars + 6}s #{auth}#{strip} %-#{max_path_size}s  %s\n", route.method.colorize.blue, route.path.colorize.cyan, location)
     end
     io.puts "\n#{routes.size} routes"
   end
