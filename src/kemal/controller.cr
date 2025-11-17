@@ -216,7 +216,7 @@ module Kemal
     # def create(name : String)
     #   if name.empty?
     #     error("Name cannot be empty")
-    #     return
+    #     return render("src/views/users/new.ecr")
     #   end
     # end
     # ```
@@ -242,11 +242,11 @@ module Kemal
     # def create(email : String, password : String)
     #   if !email.includes?("@")
     #     error("email", "Invalid email format")
-    #     return
+    #     return render("src/views/users/new.ecr")
     #   end
     #   if password.size < 8
     #     error("password", "Password must be at least 8 characters", HTTP::Status::BAD_REQUEST)
-    #     return
+    #     return render("src/views/users/new.ecr")
     #   end
     # end
     # ```
@@ -275,7 +275,7 @@ module Kemal
     #   error("email", "Email is required") if email.empty?
     #
     #   if has_error?
-    #     return {errors: errors}.to_json
+    #     return render("src/views/users/new.ecr")
     #   end
     #
     #   # Process the valid data
@@ -297,7 +297,7 @@ module Kemal
     # def update
     #   error("Something went wrong")
     #   if msg = error_for_base
-    #     puts "Base error: #{msg}"
+    #     return render("src/views/error.ecr")
     #   end
     # end
     # ```
@@ -320,7 +320,7 @@ module Kemal
     #   error("email", "Invalid email") unless email.includes?("@")
     #
     #   if msg = error_for?("email")
-    #     puts "Email error: #{msg}"
+    #     return render("src/views/users/new.ecr")
     #   end
     # end
     # ```
