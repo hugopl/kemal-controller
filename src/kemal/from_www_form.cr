@@ -1,22 +1,49 @@
 module Kemal
-  # A WWWForm is a collection of key-value pairs, typically used for form submissions.
+  # :nodoc:
+  # Internal type alias for a collection of web form parameters.
+  # This is used internally by the framework and should not be used directly.
   alias WWWForm = Array(Tuple(String, String, Bool))
 
-  # The following parameters are automatically redacted if a request is made
-  # that contains a parameter whose name partially matches one of these
-  # keywords. Case sensitive, don't be weird, use downcased parameter names as
-  # everyone does.
+  # List of parameter name keywords that trigger automatic redaction in logs.
+  #
+  # The following parameters are automatically redacted if a request contains
+  # a parameter whose name partially matches one of these keywords (case-sensitive).
+  # Use lowercase parameter names to ensure proper redaction.
+  #
+  # Default keywords: `passw`, `secret`, `token`, `_key`, `crypt`, `salt`,
+  # `certificate`, `otp`, `ssn`, `cvv`, `cvc`
+  #
+  # ## Example
+  #
+  # ```
+  # Kemal.redacted_parameters << "api_key"
+  # ```
   class_property redacted_parameters = %w(passw secret token _key crypt salt
     certificate otp ssn cvv cvc)
 
-  # Error raised when a key is not found in the WWWForm. I.e. a declared
-  # parameter in the controller action is missing from the request.
+  # Exception raised when a required parameter is not found in the request.
+  #
+  # This error is raised when a controller method declares a non-nilable parameter
+  # but the corresponding key is missing from the request data.
+  #
+  # ## Example
+  #
+  # ```
+  # @[Get("/users")]
+  # def index(name : String) # name is required
+  #   "Hello, #{name}"
+  # end
+  # # GET /users without ?name=... will raise Kemal::KeyError
+  # ```
   class KeyError < KeyError
     def initialize(form_key : String)
       super("Key not found in WWWForm: #{form_key}")
     end
   end
 
+  # :nodoc:
+  # Internal method to parse HTTP request parameters from the given context.
+  # This is used internally by the framework and should not be called directly.
   def self.parse_www_form(context : HTTP::Server::Context) : WWWForm
     request = context.request
 
@@ -50,7 +77,9 @@ module Kemal
     params
   end
 
-  # Parse www-form strings into a list of key-value pairs.
+  # :nodoc:
+  # Internal method to parse URL-encoded form strings into a WWWForm array.
+  # This is used internally by the framework and should not be called directly.
   def self.parse_www_form(*params : String) : WWWForm
     param_parts = WWWForm.new
     params.each do |param|
@@ -62,6 +91,7 @@ module Kemal
   end
 end
 
+# :nodoc:
 def Union.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0)
   {% if !T.includes?(Nil) %}
   {% raise "Only union types including Nil are supported" %}
@@ -79,10 +109,12 @@ rescue KeyError
   nil
 end
 
+# :nodoc:
 def Nil.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : Nil
   nil
 end
 
+# :nodoc:
 def String.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : String
   params.each(within: offset..) do |key, value, fetched|
     if !fetched && key == name
@@ -94,16 +126,19 @@ def String.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 
   raise Kemal::KeyError.new("Key not found: #{name}")
 end
 
+# :nodoc:
 def Int32.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : Int32
   value = String.from_www_form(name, params, offset)
   value.to_i32
 end
 
+# :nodoc:
 def Int64.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : Int64
   value = String.from_www_form(name, params, offset)
   value.to_i64
 end
 
+# :nodoc:
 def Bool.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : Bool
   value = String.from_www_form(name, params, offset)
   case value
@@ -116,6 +151,7 @@ def Bool.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 
   end
 end
 
+# :nodoc:
 def Array.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : Array(T)
   array = [] of T
   key_prefix = name + "[]"
@@ -133,6 +169,7 @@ def Array.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 =
   array
 end
 
+# :nodoc:
 def NamedTuple.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : NamedTuple
   {% for key in @type.keys %}
     key_{{ key }} = uninitialized typeof(element_type({{ key.symbolize }}))
@@ -175,6 +212,7 @@ def NamedTuple.from_www_form(name : String, params : Kemal::WWWForm, offset : In
   {% end %}
 end
 
+# :nodoc:
 def Time.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : Time
   Log.fatal { "Time.from_www_form NOT IMPLEMENTED" }
   Time.utc
