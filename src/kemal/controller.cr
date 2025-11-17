@@ -216,7 +216,8 @@ module Kemal
     # def create(name : String)
     #   if name.empty?
     #     error("Name cannot be empty")
-    #     return render("src/views/users/new.ecr")
+    #     render("src/views/users/new.ecr")
+    #     return
     #   end
     # end
     # ```
@@ -242,11 +243,13 @@ module Kemal
     # def create(email : String, password : String)
     #   if !email.includes?("@")
     #     error("email", "Invalid email format")
-    #     return render("src/views/users/new.ecr")
+    #     render("src/views/users/new.ecr")
+    #     return
     #   end
     #   if password.size < 8
     #     error("password", "Password must be at least 8 characters", HTTP::Status::BAD_REQUEST)
-    #     return render("src/views/users/new.ecr")
+    #     render("src/views/users/new.ecr")
+    #     return
     #   end
     # end
     # ```
@@ -275,7 +278,8 @@ module Kemal
     #   error("email", "Email is required") if email.empty?
     #
     #   if has_error?
-    #     return render("src/views/users/new.ecr")
+    #     render("src/views/users/new.ecr")
+    #     return
     #   end
     #
     #   # Process the valid data
@@ -297,7 +301,8 @@ module Kemal
     # def update
     #   error("Something went wrong")
     #   if msg = error_for_base
-    #     return render("src/views/error.ecr")
+    #     render("src/views/error.ecr")
+    #     return
     #   end
     # end
     # ```
@@ -320,7 +325,8 @@ module Kemal
     #   error("email", "Invalid email") unless email.includes?("@")
     #
     #   if msg = error_for?("email")
-    #     return render("src/views/users/new.ecr")
+    #     render("src/views/users/new.ecr")
+    #     return
     #   end
     # end
     # ```
