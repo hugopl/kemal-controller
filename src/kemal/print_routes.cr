@@ -1,4 +1,41 @@
 module Kemal
+  # Prints all registered routes to the specified IO stream.
+  #
+  # Displays a formatted table of all routes registered in the application,
+  # including HTTP method, path, controller/method name, and authentication/strip status.
+  # Routes are sorted by path and method.
+  #
+  # ## Parameters
+  #
+  # - `io` : IO - The output stream to write to (default: STDOUT)
+  #
+  # ## Authentication and Stripping Indicators
+  #
+  # - 🔒 - Route requires authentication (auth: true)
+  # - ✂️ - Route strips parameters (strip: true or strip: [...])
+  #
+  # ## Example
+  #
+  # ```
+  # Kemal.print_routes
+  # # Output:
+  # #    GET 🔒    /area51                    TestController#area51()
+  # #   POST       /array_of_named_tuples     TestController#array_of_named_tuples(items : Array(NamedTuple(name: String, age: Int32)))
+  # #    GET    ✂️  /strip                     TestController#strip(something : String)
+  # #
+  # # 3 routes
+  # ```
+  #
+  # ## Example with Command Line Option
+  #
+  # ```
+  # Kemal.config.extra_options do |parser|
+  #   parser.on("--routes", "Show all routes") do
+  #     Kemal.print_routes
+  #     exit(0)
+  #   end
+  # end
+  # ```
   def self.print_routes(io : IO = STDOUT)
     routes_metadata = Kemal::RouteHandler::INSTANCE.routes_metadata
     routes = routes_metadata.keys

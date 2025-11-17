@@ -5,6 +5,7 @@ module Kemal
   class ParamParser
     @raw_body : String = ""
 
+    # Returns the raw body of the request.
     def raw_body
       parse_body unless @body_parsed
       @raw_body
