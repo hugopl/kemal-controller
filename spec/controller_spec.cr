@@ -63,6 +63,11 @@ private struct TestController < Kemal::Controller
     number.inspect
   end
 
+  @[Get("/enum")]
+  def enum_param(status : HTTP::Status)
+    "Status: #{status}"
+  end
+
   @[Get("/area51", auth: true)]
   def area51
     "You found area 51!"
@@ -143,6 +148,14 @@ describe Kemal::Controller do
 
   pending "can handle default values" do
     # To be implemented
+  end
+
+  it "can handle enum parameters" do
+    get("/enum?status=200")
+    response.body.should eq("Status: OK")
+
+    get("/enum?status=not_found")
+    response.body.should eq("Status: NOT_FOUND")
   end
 
   it "does not strip parameters by default" do

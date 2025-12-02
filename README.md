@@ -67,12 +67,17 @@ Kemal-controller interprets the form keys almost like Rails does:
 - String
 - Int32
 - Int64
+- Enums
 - Bool
 - NamedTuple (with nested support)
 - Array (with nested support)
 - Nilable versions of the above types
 
 More types may be added in the future, feel free to open an issue or a PR if you need something specific.
+
+### Enums
+
+Enums are supported as method parameters as well, anything accepted by `Enum.new` or `Enum.parse` is recognized.
 
 ### Stripping parameters
 

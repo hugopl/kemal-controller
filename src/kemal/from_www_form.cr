@@ -217,3 +217,14 @@ def Time.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 
   Log.fatal { "Time.from_www_form NOT IMPLEMENTED" }
   Time.utc
 end
+
+def Enum.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : T
+  value = String.from_www_form(name, params, offset)
+  if !value.empty? && value[0].number?
+    new(value.to_i)
+  else
+    parse(value)
+  end
+rescue ex : ArgumentError
+  raise Kemal::KeyError.new("Invalid enum value for key: #{name}")
+end
