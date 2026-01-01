@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Crystal Docs 1.17.1">
+<meta name="crystal_docs.project_version" content="main">
+<meta name="crystal_docs.project_name" content="kemal-controller">
+
+
+
+<link href="../css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../js/doc.js"></script>
+
+  <meta name="repository-name" content="kemal-controller">
+  <title>Kemal::Controller - kemal-controller main</title>
+  <script type="text/javascript">
+    CrystalDocs.base_path = "../";
+  </script>
+</head>
+<body>
+
+<svg class="hidden">
+  <symbol id="octicon-link" viewBox="0 0 16 16">
+    <path fill="currentColor" fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
+  </symbol>
+</svg>
+<input type="checkbox" id="sidebar-btn">
+<label for="sidebar-btn" id="sidebar-btn-label">
+  <svg class="open" xmlns="http://www.w3.org/2000/svg" height="2em" width="2em" viewBox="0 0 512 512"><title>Open Sidebar</title><path fill="currentColor" d="M80 96v64h352V96H80zm0 112v64h352v-64H80zm0 112v64h352v-64H80z"></path></svg>
+  <svg class="close" xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 512 512"><title>Close Sidebar</title><path fill="currentColor" d="m118.6 73.4-45.2 45.2L210.7 256 73.4 393.4l45.2 45.2L256 301.3l137.4 137.3 45.2-45.2L301.3 256l137.3-137.4-45.2-45.2L256 210.7Z"></path></svg>
+</label>
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="search-box">
+      <input type="search" class="search-input" placeholder="Search..." spellcheck="false" aria-label="Search">
+    </div>
+
+    <div class="project-summary">
+      <h1 class="project-name">
+        <a href="../index.html">
+          kemal-controller
+        </a>
+      </h1>
+
+      <span class="project-version">
+        main
+      </span>
+    </div>
+  </div>
+
+  <div class="search-results hidden">
+    <ul class="search-list"></ul>
+  </div>
+
+  <div class="types-list">
+    <ul>
+  
+  <li class="parent open current" data-id="kemal-controller/Kemal" data-name="kemal">
+      <a href="../Kemal.html">Kemal</a>
+      
+        <ul>
+  
+  <li class="parent open current" data-id="kemal-controller/Kemal/Controller" data-name="kemal::controller">
+      <a href="../Kemal/Controller.html">Controller</a>
+      
+        <ul>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Delete" data-name="kemal::controller::delete">
+      <a href="../Kemal/Controller/Delete.html">Delete</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Errors" data-name="kemal::controller::errors">
+      <a href="../Kemal/Controller/Errors.html">Errors</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Get" data-name="kemal::controller::get">
+      <a href="../Kemal/Controller/Get.html">Get</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Head" data-name="kemal::controller::head">
+      <a href="../Kemal/Controller/Head.html">Head</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Options" data-name="kemal::controller::options">
+      <a href="../Kemal/Controller/Options.html">Options</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Patch" data-name="kemal::controller::patch">
+      <a href="../Kemal/Controller/Patch.html">Patch</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Post" data-name="kemal::controller::post">
+      <a href="../Kemal/Controller/Post.html">Post</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Put" data-name="kemal::controller::put">
+      <a href="../Kemal/Controller/Put.html">Put</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/KeyError" data-name="kemal::keyerror">
+      <a href="../Kemal/KeyError.html">KeyError</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/ParamParser" data-name="kemal::paramparser">
+      <a href="../Kemal/ParamParser.html">ParamParser</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+</ul>
+
+  </div>
+</div>
+
+
+<div class="main-content">
+<h1 class="type-name">
+
+  <span class="kind">
+    abstract struct
+  </span> Kemal::<wbr>Controller
+
+</h1>
+
+
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Kemal/Controller.html">Kemal::Controller</a></li><li class="superclass">Struct</li><li class="superclass">Value</li><li class="superclass">Object</li></ul>
+
+
+
+
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>Abstract controller class that provides a structured way to define HTTP endpoints.</p>
+<p>Controllers are structs, so the overhead is minimal and you can still use all
+Kemal features. Method parameters automatically map to GET/POST/URL parameters
+with type-safe conversion.</p>
+<h2><a id="example" class="anchor" href="#example">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Example</h2>
+<pre><code class="language-crystal"><span class="k">struct</span> <span class="t">UsersController</span> <span class="o">&lt;</span> <span class="t">Kemal</span><span class="t">::</span><span class="t">Controller</span>
+  @[<span class="t">Get</span>(<span class="s">&quot;/users&quot;</span>)]
+  <span class="k">def</span> <span class="m">index</span>
+    <span class="s">&quot;Listing all users&quot;</span>
+  <span class="k">end</span>
+
+  @[<span class="t">Get</span>(<span class="s">&quot;/users/:id&quot;</span>)]
+  <span class="k">def</span> <span class="m">show</span>(id : <span class="t">Int32</span>)
+    <span class="s">&quot;Showing user with ID: </span><span class="i">#{</span>id<span class="i">}</span><span class="s">&quot;</span>
+  <span class="k">end</span>
+
+  @[<span class="t">Post</span>(<span class="s">&quot;/users&quot;</span>)]
+  <span class="k">def</span> <span class="m">create</span>(name : <span class="t">String</span>, age : <span class="t">Int32</span>, description : <span class="t">String</span>?)
+    <span class="s">&quot;Creating user with name: </span><span class="i">#{</span>name<span class="i">}</span><span class="s">, age: </span><span class="i">#{</span>age<span class="i">}</span><span class="s">, description: </span><span class="i">#{</span>description<span class="i">}</span><span class="s">&quot;</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+<h2><a id="supported-parameter-types" class="anchor" href="#supported-parameter-types">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Supported Parameter Types</h2>
+<ul>
+<li>String</li>
+<li>Int32, Int64</li>
+<li>Bool</li>
+<li>Array (with nested support)</li>
+<li>NamedTuple (with nested support)</li>
+<li>Nilable versions of the above</li>
+</ul>
+<h2><a id="parameter-mapping" class="anchor" href="#parameter-mapping">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Parameter Mapping</h2>
+<ul>
+<li><code>name=John</code> becomes <code>name : String</code></li>
+<li><code>item[foo]=bar</code> becomes <code>item : NamedTuple(foo: String)</code></li>
+<li><code>items[]=1&amp;items[]=2</code> becomes <code>items : Array(Int32)</code></li>
+<li><code>items[][id]=1&amp;items[][quantity]=2</code> becomes <code>items : Array(NamedTuple(id: Int32, quantity: Int32))</code></li>
+</ul>
+<h2><a id="route-annotation-parameters" class="anchor" href="#route-annotation-parameters">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Route annotation parameters</h2>
+<ul>
+<li><code>path</code> : String - The URL path for the route (can include path parameters like <code>:id</code>)</li>
+<li><code>auth</code> : Bool - If true, requires authentication via <code>authenticate!</code> method (default: false)</li>
+<li><code>strip</code> : Bool | Array(Symbol) - If true, strips all parameters; if array, strips only specified parameters (default: false)</li>
+</ul>
+<h2><a id="example-1" class="anchor" href="#example-1">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Example</h2>
+<pre><code class="language-crystal">@[<span class="t">Get</span>(<span class="s">&quot;/users/:id&quot;</span>)]
+<span class="k">def</span> <span class="m">show</span>(id : <span class="t">Int32</span>)
+  <span class="s">&quot;User </span><span class="i">#{</span>id<span class="i">}</span><span class="s">&quot;</span>
+<span class="k">end</span></code></pre>
+<h2><a id="example-with-authentication" class="anchor" href="#example-with-authentication">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Example with Authentication</h2>
+<pre><code class="language-crystal">@[<span class="t">Get</span>(<span class="s">&quot;/admin/dashboard&quot;</span>, auth: <span class="n">true</span>)]
+<span class="k">def</span> <span class="m">dashboard</span>
+  <span class="s">&quot;Admin Dashboard&quot;</span>
+<span class="k">end</span>
+
+<span class="k">private</span> <span class="k">def</span> <span class="m">authenticate!</span> : <span class="t">Bool</span>
+  <span class="c"># Return false to halt with 401 status</span>
+  request.headers[<span class="s">&quot;Authorization&quot;</span>]? <span class="o">==</span> <span class="s">&quot;SecretToken&quot;</span>
+<span class="k">end</span></code></pre>
+<h2><a id="example-with-parameter-stripping" class="anchor" href="#example-with-parameter-stripping">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Example with Parameter Stripping</h2>
+<pre><code class="language-crystal">@[<span class="t">Post</span>(<span class="s">&quot;/users&quot;</span>, strip: <span class="n">true</span>)]
+<span class="k">def</span> <span class="m">create</span>(name : <span class="t">String</span>, description : <span class="t">String</span>?)
+  <span class="c"># name and description will have leading/trailing whitespace removed</span>
+<span class="k">end</span>
+
+@[<span class="t">Post</span>(<span class="s">&quot;/login&quot;</span>, strip: [<span class="n">:email</span>])]
+<span class="k">def</span> <span class="m">login</span>(email : <span class="t">String</span>, password : <span class="t">String</span>)
+  <span class="c"># Only email will be stripped, password remains unchanged</span>
+<span class="k">end</span></code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2>
+    <a id="defined-in" class="anchor" href="#defined-in">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Defined in:
+  </h2>
+  
+    
+      <a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L91" target="_blank">
+        kemal/controller.cr
+      </a>
+    
+    <br/>
+  
+
+
+
+
+
+  
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructors
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#new%28context%3AHTTP%3A%3AServer%3A%3AContext%29-class-method" class="signature"><strong>.new</strong>(context : HTTP::Server::Context)</a>
+        
+          <div class="summary"><p>Initializes a new controller instance.</p></div>
+        
+      </li>
+    
+  </ul>
+
+
+  
+
+  
+
+  
+  <h2>
+    <a id="instance-method-summary" class="anchor" href="#instance-method-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#context%3AHTTP%3A%3AServer%3A%3AContext-instance-method" class="signature"><strong>#context</strong> : HTTP::Server::Context</a>
+        
+          <div class="summary"><p>The HTTP server context for the current request.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#error%28field%2Cmessage%2Cstatus%3AHTTP%3A%3AStatus%7CNil%3Dnil%29-instance-method" class="signature"><strong>#error</strong>(field, message, status : HTTP::Status | Nil = <span class="n">nil</span>)</a>
+        
+          <div class="summary"><p>Adds a field-specific error message.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#error%28message%3AString%29-instance-method" class="signature"><strong>#error</strong>(message : String)</a>
+        
+          <div class="summary"><p>Adds a general error message to the base error field.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#error_for%3F%28field%3AString%29%3AString%7CNil-instance-method" class="signature"><strong>#error_for?</strong>(field : String) : String | Nil</a>
+        
+          <div class="summary"><p>Returns the error message for a specific field.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#error_for_base%3AString%7CNil-instance-method" class="signature"><strong>#error_for_base</strong> : String | Nil</a>
+        
+          <div class="summary"><p>Returns the error message for the &quot;base&quot; field.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#errors%3AErrors%7CNil-instance-method" class="signature"><strong>#errors</strong> : Errors | Nil</a>
+        
+          <div class="summary"><p>Hash of validation errors that occurred during request processing.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#has_error%3F%3ABool-instance-method" class="signature"><strong>#has_error?</strong> : Bool</a>
+        
+          <div class="summary"><p>Checks if any errors have been recorded.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#redirect%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#redirect</strong>(*args, **options)</a>
+        
+          <div class="summary"><p>Delegates to the redirect method from the context.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#redirect%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#redirect</strong>(*args, **options, &)</a>
+        
+          <div class="summary"><p>Delegates to the redirect method from the context.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#request%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#request</strong>(*args, **options)</a>
+        
+          <div class="summary"><p>Delegates to the request object from the context.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#request%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#request</strong>(*args, **options, &)</a>
+        
+          <div class="summary"><p>Delegates to the request object from the context.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#response%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#response</strong>(*args, **options)</a>
+        
+          <div class="summary"><p>Delegates to the response object from the context.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#response%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#response</strong>(*args, **options, &)</a>
+        
+          <div class="summary"><p>Delegates to the response object from the context.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#session%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#session</strong>(*args, **options)</a>
+        
+          <div class="summary"><p>Delegates to the session object from the context.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#session%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#session</strong>(*args, **options, &)</a>
+        
+          <div class="summary"><p>Delegates to the session object from the context.</p></div>
+        
+      </li>
+    
+  </ul>
+
+
+
+  <div class="methods-inherited">
+    
+      
+
+
+      
+
+
+      
+
+
+      
+
+
+    
+      
+
+
+      
+
+
+      
+
+
+      
+
+
+    
+      
+
+
+      
+
+
+      
+
+
+      
+
+
+    
+  </div>
+
+  
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="new(context:HTTP::Server::Context)-class-method">
+      <div class="signature">
+        
+        def self.<strong>new</strong>(context : HTTP::Server::Context)
+
+        <a class="method-permalink" href="#new%28context%3AHTTP%3A%3AServer%3A%3AContext%29-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Initializes a new controller instance.</p>
+<p>This is called automatically by the framework when processing a request.
+You typically don't need to call this directly.</p>
+<h2><a id="parameters" class="anchor" href="#parameters">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Parameters</h2>
+<ul>
+<li><code><a href="../Kemal/Controller.html#context%3AHTTP%3A%3AServer%3A%3AContext-instance-method">#context</a></code> : HTTP::Server::Context - The HTTP server context for the request</li>
+</ul>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L206" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+  
+
+  
+
+  
+  <h2>
+    <a id="instance-method-detail" class="anchor" href="#instance-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="context:HTTP::Server::Context-instance-method">
+      <div class="signature">
+        
+        def <strong>context</strong> : HTTP::Server::Context
+
+        <a class="method-permalink" href="#context%3AHTTP%3A%3AServer%3A%3AContext-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>The HTTP server context for the current request.</p>
+<p>Provides access to the underlying HTTP::Server::Context which contains
+the request and response objects.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L162" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="error(field,message,status:HTTP::Status|Nil=nil)-instance-method">
+      <div class="signature">
+        
+        def <strong>error</strong>(field, message, status : HTTP::Status | Nil = <span class="n">nil</span>)
+
+        <a class="method-permalink" href="#error%28field%2Cmessage%2Cstatus%3AHTTP%3A%3AStatus%7CNil%3Dnil%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Adds a field-specific error message.</p>
+<p>Stores an error message for a specific field and sets the appropriate HTTP status code.
+If no custom status is provided, sets 400 (Bad Request) for GET/HEAD/OPTIONS requests
+or 422 (Unprocessable Entity) for POST/PUT/PATCH/DELETE requests.</p>
+<h2><a id="parameters" class="anchor" href="#parameters">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Parameters</h2>
+<ul>
+<li><code>field</code> : String - The name of the field that has an error</li>
+<li><code>message</code> : String - The error message for this field</li>
+<li><code>status</code> : HTTP::Status? - Optional custom HTTP status code (default: nil)</li>
+</ul>
+<h2><a id="example" class="anchor" href="#example">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Example</h2>
+<pre><code class="language-crystal"><span class="k">def</span> <span class="m">create</span>(email : <span class="t">String</span>, password : <span class="t">String</span>)
+  <span class="k">if</span> <span class="o">!</span>email.includes?(<span class="s">&quot;@&quot;</span>)
+    error(<span class="s">&quot;email&quot;</span>, <span class="s">&quot;Invalid email format&quot;</span>)
+    render(<span class="s">&quot;src/views/users/new.ecr&quot;</span>)
+    <span class="k">return</span>
+  <span class="k">end</span>
+  <span class="k">if</span> password.size <span class="o">&lt;</span> <span class="n">8</span>
+    error(<span class="s">&quot;password&quot;</span>, <span class="s">&quot;Password must be at least 8 characters&quot;</span>, <span class="t">HTTP</span><span class="t">::</span><span class="t">Status</span><span class="t">::</span><span class="t">BAD_REQUEST</span>)
+    render(<span class="s">&quot;src/views/users/new.ecr&quot;</span>)
+    <span class="k">return</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L262" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="error(message:String)-instance-method">
+      <div class="signature">
+        
+        def <strong>error</strong>(message : String)
+
+        <a class="method-permalink" href="#error%28message%3AString%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Adds a general error message to the base error field.</p>
+<p>This is useful for errors that don't belong to a specific field.
+Sets the response status to 400 (Bad Request) for GET/HEAD/OPTIONS requests
+or 422 (Unprocessable Entity) for POST/PUT/PATCH/DELETE requests.</p>
+<h2><a id="parameters" class="anchor" href="#parameters">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Parameters</h2>
+<ul>
+<li><code>message</code> : String - The error message to add</li>
+</ul>
+<h2><a id="example" class="anchor" href="#example">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Example</h2>
+<pre><code class="language-crystal"><span class="k">def</span> <span class="m">create</span>(name : <span class="t">String</span>)
+  <span class="k">if</span> name.empty?
+    error(<span class="s">&quot;Name cannot be empty&quot;</span>)
+    render(<span class="s">&quot;src/views/users/new.ecr&quot;</span>)
+    <span class="k">return</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L230" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="error_for?(field:String):String|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>error_for?</strong>(field : String) : String | Nil
+
+        <a class="method-permalink" href="#error_for%3F%28field%3AString%29%3AString%7CNil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns the error message for a specific field.</p>
+<p>Returns <code>nil</code> if there is no error for the specified field.</p>
+<h2><a id="parameters" class="anchor" href="#parameters">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Parameters</h2>
+<ul>
+<li><code>field</code> : String - The name of the field to check for errors</li>
+</ul>
+<h2><a id="example" class="anchor" href="#example">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Example</h2>
+<pre><code class="language-crystal"><span class="k">def</span> <span class="m">create</span>(email : <span class="t">String</span>)
+  error(<span class="s">&quot;email&quot;</span>, <span class="s">&quot;Invalid email&quot;</span>) <span class="k">unless</span> email.includes?(<span class="s">&quot;@&quot;</span>)
+
+  <span class="k">if</span> msg <span class="o">=</span> error_for?(<span class="s">&quot;email&quot;</span>)
+    render(<span class="s">&quot;src/views/users/new.ecr&quot;</span>)
+    <span class="k">return</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L339" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="error_for_base:String|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>error_for_base</strong> : String | Nil
+
+        <a class="method-permalink" href="#error_for_base%3AString%7CNil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns the error message for the &quot;base&quot; field.</p>
+<p>The &quot;base&quot; field is used for general errors that don't belong to a specific field.
+Returns <code>nil</code> if there is no base error.</p>
+<h2><a id="example" class="anchor" href="#example">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Example</h2>
+<pre><code class="language-crystal"><span class="k">def</span> <span class="m">update</span>
+  error(<span class="s">&quot;Something went wrong&quot;</span>)
+  <span class="k">if</span> msg <span class="o">=</span> error_for_base
+    render(<span class="s">&quot;src/views/error.ecr&quot;</span>)
+    <span class="k">return</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L315" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="errors:Errors|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>errors</strong> : <a href="../Kemal/Controller/Errors.html">Errors</a> | Nil
+
+        <a class="method-permalink" href="#errors%3AErrors%7CNil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Hash of validation errors that occurred during request processing.</p>
+<p>Maps field names to error messages. Use <code><a href="../Kemal/Controller.html#error%28field%2Cmessage%2Cstatus%3AHTTP%3A%3AStatus%7CNil%3Dnil%29-instance-method">#error</a></code> methods to add errors
+and <code><a href="../Kemal/Controller.html#has_error%3F%3ABool-instance-method">#has_error?</a></code>, <code><a href="../Kemal/Controller.html#error_for%3F%28field%3AString%29%3AString%7CNil-instance-method">#error_for?</a></code>, <code><a href="../Kemal/Controller.html#error_for_base%3AString%7CNil-instance-method">#error_for_base</a></code> to check for errors.</p>
+<p>Returns <code>nil</code> if no errors have been recorded.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L170" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="has_error?:Bool-instance-method">
+      <div class="signature">
+        
+        def <strong>has_error?</strong> : Bool
+
+        <a class="method-permalink" href="#has_error%3F%3ABool-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Checks if any errors have been recorded.</p>
+<p>Returns <code>true</code> if there are one or more validation errors, <code>false</code> otherwise.</p>
+<h2><a id="example" class="anchor" href="#example">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Example</h2>
+<pre><code class="language-crystal"><span class="k">def</span> <span class="m">create</span>(name : <span class="t">String</span>, email : <span class="t">String</span>)
+  error(<span class="s">&quot;name&quot;</span>, <span class="s">&quot;Name is required&quot;</span>) <span class="k">if</span> name.empty?
+  error(<span class="s">&quot;email&quot;</span>, <span class="s">&quot;Email is required&quot;</span>) <span class="k">if</span> email.empty?
+
+  <span class="k">if</span> has_error?
+    render(<span class="s">&quot;src/views/users/new.ecr&quot;</span>)
+    <span class="k">return</span>
+  <span class="k">end</span>
+
+  <span class="c"># Process the valid data</span>
+<span class="k">end</span></code></pre>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L294" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="redirect(*args,**options)-instance-method">
+      <div class="signature">
+        
+        def <strong>redirect</strong>(*args, **options)
+
+        <a class="method-permalink" href="#redirect%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Delegates to the redirect method from the context.</p>
+<p>Redirects the request to another URL.</p>
+<h2><a id="example" class="anchor" href="#example">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Example</h2>
+<pre><code class="language-crystal">redirect(<span class="s">&quot;/login&quot;</span>)</code></pre>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L196" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="redirect(*args,**options,&amp;)-instance-method">
+      <div class="signature">
+        
+        def <strong>redirect</strong>(*args, **options, &)
+
+        <a class="method-permalink" href="#redirect%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Delegates to the redirect method from the context.</p>
+<p>Redirects the request to another URL.</p>
+<h2><a id="example" class="anchor" href="#example">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Example</h2>
+<pre><code class="language-crystal">redirect(<span class="s">&quot;/login&quot;</span>)</code></pre>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L196" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="request(*args,**options)-instance-method">
+      <div class="signature">
+        
+        def <strong>request</strong>(*args, **options)
+
+        <a class="method-permalink" href="#request%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Delegates to the request object from the context.</p>
+<p>Provides direct access to the HTTP::Request for the current request.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L175" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="request(*args,**options,&amp;)-instance-method">
+      <div class="signature">
+        
+        def <strong>request</strong>(*args, **options, &)
+
+        <a class="method-permalink" href="#request%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Delegates to the request object from the context.</p>
+<p>Provides direct access to the HTTP::Request for the current request.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L175" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="response(*args,**options)-instance-method">
+      <div class="signature">
+        
+        def <strong>response</strong>(*args, **options)
+
+        <a class="method-permalink" href="#response%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Delegates to the response object from the context.</p>
+<p>Provides direct access to the HTTP::Response for the current request.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L180" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="response(*args,**options,&amp;)-instance-method">
+      <div class="signature">
+        
+        def <strong>response</strong>(*args, **options, &)
+
+        <a class="method-permalink" href="#response%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Delegates to the response object from the context.</p>
+<p>Provides direct access to the HTTP::Response for the current request.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L180" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="session(*args,**options)-instance-method">
+      <div class="signature">
+        
+        def <strong>session</strong>(*args, **options)
+
+        <a class="method-permalink" href="#session%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Delegates to the session object from the context.</p>
+<p>Provides access to the Kemal session for the current request.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L185" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="session(*args,**options,&amp;)-instance-method">
+      <div class="signature">
+        
+        def <strong>session</strong>(*args, **options, &)
+
+        <a class="method-permalink" href="#session%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Delegates to the session object from the context.</p>
+<p>Provides access to the Kemal session for the current request.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/40d29bbd6dae45642e455b8512cc6983dce51d6e/src/kemal/controller.cr#L185" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+
+</div>
+
+</body>
+</html>
