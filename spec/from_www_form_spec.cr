@@ -40,6 +40,11 @@ describe "#from_www_form" do
       String.from_www_form("key", params).should eq("")
     end
 
+    it "handle missing Bool values as false" do
+      params = [{"some_key", "", false}]
+      Bool.from_www_form("key", params).should eq(false)
+    end
+
     it "uses offset parameter correctly" do
       params = [{"key", "first", false}, {"key", "second", false}]
       String.from_www_form("key", params, 0).should eq("first")

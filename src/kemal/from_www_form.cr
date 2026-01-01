@@ -140,7 +140,12 @@ end
 
 # :nodoc:
 def Bool.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : Bool
-  value = String.from_www_form(name, params, offset)
+  begin
+    value = String.from_www_form(name, params, offset)
+  rescue Kemal::KeyError
+    return false
+  end
+
   case value
   when "true", "1"
     true

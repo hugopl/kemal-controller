@@ -138,6 +138,14 @@ describe Kemal::Controller do
     response.body.should eq("Int32: 42, Int64: 1234567890123, Flag: true, Flag2: false")
   end
 
+  it "default Bool values to false when not provided (html checkboxes)" do
+    post("/integers_and_booleans", {
+      {"int32", "7"},
+      {"int64", "9876543210987"},
+    })
+    response.body.should eq("Int32: 7, Int64: 9876543210987, Flag: false, Flag2: false")
+  end
+
   it "can handle nilable parameters" do
     get("/nilable")
     response.body.should eq("nil")
