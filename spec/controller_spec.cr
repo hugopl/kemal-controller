@@ -63,7 +63,7 @@ private struct TestController < Kemal::Controller
     number.inspect
   end
 
-  @[Get("/enum")]
+  @[Get("/enum", strip: true)]
   def enum_param(status : HTTP::Status)
     "Status: #{status}"
   end

@@ -143,7 +143,7 @@ module Kemal
 
                   {% strip = ann[:strip] %}
                   {% if strip && (strip == true || strip.includes?(param.name.id.symbolize)) %}
-                    {{ param.name.id }} = {{ param.name.id }}.strip unless {{ param.name.id }}.nil?
+                    {{ param.name.id }} = {{ param.name.id }}.strip if {{ param.name.id }}.responds_to?(:strip)
                   {% end %}
                 {% end %}
 
