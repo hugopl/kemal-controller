@@ -3,6 +3,7 @@ ENV["KEMAL_ENV"] = "test"
 require "spec"
 require "kemal"
 require "spec-kemal"
+require "spec-kemal/session"
 require "../src/kemal-controller"
 
 def post(path, params : Enumerable(Tuple(String, _)), *, headers : HTTP::Headers? = nil)

@@ -7,8 +7,10 @@ license: MIT
 dependencies:
   kemal:
     github: kemalcr/kemal
-    version: 1.7.2
+    version: '>= 1.7.2'
 
 development_dependencies:
   spec-kemal:
     github: kemalcr/spec-kemal
+  kemal-session:
+    github: kemalcr/kemal-session
