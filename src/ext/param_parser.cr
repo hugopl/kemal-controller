@@ -16,6 +16,8 @@ module Kemal
 
       return unless content_type
 
+      validate_content_length!
+
       if content_type.try(&.starts_with?(URL_ENCODED_FORM))
         @raw_body = @request.body.try(&.gets_to_end) || ""
         @body = parse_part(@raw_body)
