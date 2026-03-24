@@ -207,6 +207,6 @@ describe Kemal::Controller do
     )
     output.should contain("   GET    ✂️  /strip                     TestController#strip(something : String)\n")
   ensure
-    Colorize.enabled = color_setting.not_nil!
+    Colorize.enabled = color_setting.not_nil! # ameba:disable Lint/NotNil
   end
 end
