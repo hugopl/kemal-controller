@@ -51,7 +51,18 @@ struct OrdersController < Kemal::Controller
 end
 ```
 
-Default values aren't supported yet, meanwhile use a nilable type and handle the defaulting logic inside the method.
+Default values are supported — the parameter must have an explicit type annotation:
+
+```Crystal
+struct UsersController < Kemal::Controller
+  @[Get("/greet")]
+  def greet(name : String = "World", times : Int32 = 1)
+    "Hello, #{name}! " * times
+  end
+end
+```
+
+If the parameter is absent from the request the default value is used. Explicit type annotations are required; omitting the type is a compile-time error.
 
 ### How the parameters are mapped?
 
@@ -74,6 +85,27 @@ Kemal-controller interprets the form keys almost like Rails does:
 - Nilable versions of the above types
 
 More types may be added in the future, feel free to open an issue or a PR if you need something specific.
+
+### Error handling
+
+Two exceptions are raised for bad request parameters:
+
+- `Kemal::MissingParameterError` — a required (non-nilable, no default) parameter was not present in the request.
+- `Kemal::InvalidParameterError` — the parameter was present but its value could not be coerced to the declared type (e.g. `"foo"` for an `Int32`, an unrecognised enum member, or an invalid boolean literal).
+
+Both inherit from `Exception`. You can handle them with Kemal's exception-specific error handlers:
+
+```Crystal
+error Kemal::MissingParameterError do |env, ex|
+  env.response.status_code = 400
+  ex.message
+end
+
+error Kemal::InvalidParameterError do |env, ex|
+  env.response.status_code = 422
+  ex.message
+end
+```
 
 ### Enums
 
