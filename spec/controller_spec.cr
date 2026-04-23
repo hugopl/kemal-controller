@@ -68,6 +68,11 @@ private struct TestController < Kemal::Controller
     "Status: #{status}"
   end
 
+  @[Get("/defaults")]
+  def with_defaults(greeting : String = "Hello", count : Int32 = 3)
+    "#{greeting} x#{count}"
+  end
+
   @[Get("/area51", auth: true)]
   def area51
     "You found area 51!"
@@ -154,8 +159,22 @@ describe Kemal::Controller do
     response.body.should eq("100")
   end
 
-  pending "can handle default values" do
-    # To be implemented
+  it "uses default values when parameters are absent" do
+    get("/defaults")
+    response.body.should eq("Hello x3")
+  end
+
+  it "uses provided value and default for the other parameter" do
+    get("/defaults?greeting=Hi")
+    response.body.should eq("Hi x3")
+
+    get("/defaults?count=7")
+    response.body.should eq("Hello x7")
+  end
+
+  it "overrides all defaults when all parameters are provided" do
+    get("/defaults?greeting=Hey&count=1")
+    response.body.should eq("Hey x1")
   end
 
   it "can handle enum parameters" do

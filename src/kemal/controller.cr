@@ -138,8 +138,19 @@ module Kemal
 
                 %params = Kemal.parse_www_form(ctx)
                 {% for param in method.args %}
+                  {% if !param.restriction %}
+                    {% raise "Parameter '#{param.name}' in #{@type.name}##{method.name} must have an explicit type annotation, e.g. '#{param.name} : String'." %}
+                  {% end %}
                   {% type = param.restriction.resolve %}
-                  {{ param.name.id }} = {{ type }}.from_www_form({{ param.name.stringify }},  %params)
+                  {% if param.default_value %}
+                    {{ param.name.id }} = begin
+                      {{ type }}.from_www_form({{ param.name.stringify }}, %params)
+                    rescue Kemal::MissingParameterError
+                      {{ param.default_value }}
+                    end
+                  {% else %}
+                    {{ param.name.id }} = {{ type }}.from_www_form({{ param.name.stringify }}, %params)
+                  {% end %}
 
                   {% strip = ann[:strip] %}
                   {% if strip && (strip == true || strip.includes?(param.name.id.symbolize)) %}
