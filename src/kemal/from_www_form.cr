@@ -21,10 +21,11 @@ module Kemal
   class_property redacted_parameters = %w(passw secret token _key crypt salt
     certificate otp ssn cvv cvc)
 
-  # Exception raised when a required parameter is not found in the request.
+  # Exception raised when a required parameter is not present in the request.
   #
   # This error is raised when a controller method declares a non-nilable parameter
-  # but the corresponding key is missing from the request data.
+  # but the corresponding key is missing from the request data (query string, body,
+  # or URL segments).
   #
   # ## Example
   #
@@ -33,11 +34,33 @@ module Kemal
   # def index(name : String) # name is required
   #   "Hello, #{name}"
   # end
-  # # GET /users without ?name=... will raise Kemal::KeyError
+  # # GET /users without ?name=... will raise Kemal::MissingParameterError
   # ```
-  class KeyError < KeyError
-    def initialize(form_key : String)
-      super("Key not found in WWWForm: #{form_key}")
+  class MissingParameterError < Exception
+    def initialize(param_name : String)
+      super("Missing parameter: #{param_name}")
+    end
+  end
+
+  # Exception raised when a parameter is present but its value cannot be
+  # converted to the declared type.
+  #
+  # This error is raised when a controller method declares a typed parameter
+  # and the value exists in the request but fails type coercion (e.g. `"foo"`
+  # for an `Int32`, an unrecognised enum member, or an invalid boolean literal).
+  #
+  # ## Example
+  #
+  # ```
+  # @[Get("/users")]
+  # def index(age : Int32)
+  #   "Age: #{age}"
+  # end
+  # # GET /users?age=foo will raise Kemal::InvalidParameterError
+  # ```
+  class InvalidParameterError < Exception
+    def initialize(param_name : String, expected_type : String, value)
+      super("Invalid value #{value.inspect} for parameter '#{param_name}': expected #{expected_type}")
     end
   end
 
@@ -105,7 +128,7 @@ def Union.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 =
   {% type = (T - {Nil}).first %}
   {{ type }}.from_www_form(name, params, offset)
   {% end %}
-rescue KeyError
+rescue Kemal::MissingParameterError
   nil
 end
 
@@ -123,26 +146,26 @@ def String.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 
     end
     offset += 1
   end
-  raise Kemal::KeyError.new("Key not found: #{name}")
+  raise Kemal::MissingParameterError.new(name)
 end
 
 # :nodoc:
 def Int32.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : Int32
   value = String.from_www_form(name, params, offset)
-  value.to_i32
+  value.to_i32? || raise Kemal::InvalidParameterError.new(name, "Int32", value)
 end
 
 # :nodoc:
 def Int64.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : Int64
   value = String.from_www_form(name, params, offset)
-  value.to_i64
+  value.to_i64? || raise Kemal::InvalidParameterError.new(name, "Int64", value)
 end
 
 # :nodoc:
 def Bool.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : Bool
   begin
     value = String.from_www_form(name, params, offset)
-  rescue Kemal::KeyError
+  rescue Kemal::MissingParameterError
     return false
   end
 
@@ -152,7 +175,7 @@ def Bool.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 
   when "false", "0"
     false
   else
-    raise Kemal::KeyError.new("Invalid boolean value for key: #{name}")
+    raise Kemal::InvalidParameterError.new(name, "Bool", value)
   end
 end
 
@@ -203,7 +226,7 @@ def NamedTuple.from_www_form(name : String, params : Kemal::WWWForm, offset : In
     {% elsif @type[key] < Array %}
       key_{{ key }} = {{ @type[key] }}.new
     {% else %}
-      raise Kemal::KeyError.new("Key not found for NamedTuple: {{ key }}")
+      raise Kemal::MissingParameterError.new("{{ key }}")
     {% end %}
     end
   {% end %}
@@ -231,5 +254,5 @@ def Enum.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 
     parse(value)
   end
 rescue ex : ArgumentError
-  raise Kemal::KeyError.new("Invalid enum value for key: #{name}")
+  raise Kemal::InvalidParameterError.new(name, T.to_s, value)
 end
