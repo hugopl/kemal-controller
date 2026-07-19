@@ -83,7 +83,8 @@ module Kemal
     params = parse_www_form(query_params, body_params)
 
     # URL params
-    context.route_lookup.params.each do |key, value|
+    url_params = context.ws_route_found? ? context.ws_route_lookup.params : context.route_lookup.params
+    url_params.each do |key, value|
       value = value.empty? ? "" : URI.decode(value)
       params << {key, value, false}
     end

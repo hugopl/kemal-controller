@@ -148,7 +148,7 @@ struct AdminController < Kemal::Controller
     "Welcome to the admin dashboard!"
   end
 
-  private def authenticate! : Bool
+  def authenticate! : Bool
     if !current_user.try(&.current_user.admin?)
       redirect("/login")
       return false
@@ -157,6 +157,30 @@ struct AdminController < Kemal::Controller
   end
 end
 ```
+
+### WebSocket routes
+
+WebSocket endpoints are declared with `@[WebSocket]`, taking advantage of Kemal's
+own WebSocket support. The method is called once, right after the handshake
+completes; use the `socket` getter to register `on_message`/`on_close`/etc.
+handlers. Parameters are extracted from the handshake request the same way `Get` does.
+
+```Crystal
+struct ChatController < Kemal::Controller
+  @[WebSocket("/chat/:room")]
+  def chat(room : String)
+    socket.send("Welcome to #{room}!")
+    socket.on_message do |message|
+      socket.send("#{room}: #{message}")
+    end
+  end
+end
+```
+
+`strip` works the same as with HTTP routes. `auth` works too, but with one
+difference: by the time the method runs the handshake response has already
+been sent, so a failed `authenticate!` can't reply with a 401 — the socket is
+closed instead with `HTTP::WebSocket::CloseCode::PolicyViolation`.
 
 ### Printing routes
 
@@ -180,8 +204,9 @@ On `--routes` your app will print something like:
    GET  /hello                     TestController#hello(name : String)
   POST  /hello                     TestController#post_hello(name : String)
    GET  /regular_kemal_route       ?
+    WS  /chat/:room                ChatController#chat(room : String)
 
-4 routes
+5 routes
 ```
 
 ## Installation
