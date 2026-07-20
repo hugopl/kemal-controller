@@ -19,8 +19,8 @@ module Kemal
   # ```
   # Kemal.print_routes
   # # Output:
-  # #    GET 🔒    /area51                    TestController#area51()
-  # #   POST       /array_of_named_tuples     TestController#array_of_named_tuples(items : Array(NamedTuple(name: String, age: Int32)))
+  # #    GET 🔒     /area51                    TestController#area51()
+  # #   POST        /array_of_named_tuples     TestController#array_of_named_tuples(items : Array(NamedTuple(name: String, age: Int32)))
   # #    GET    ✂️  /strip                     TestController#strip(something : String)
   # #
   # # 3 routes
@@ -50,7 +50,7 @@ module Kemal
     entries.each do |entry|
       metadata = entry[:metadata]
       auth = metadata[:auth] ? "🔒 " : "   "
-      strip = metadata[:strip] ? "✂️ " : "  "
+      strip = metadata[:strip] ? "✂️ " : "   "
 
       if metadata[:location] =~ /\A(\w+)#(\w+)(.*)\z/
         class_name = $1
