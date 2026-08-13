@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **BREAKING CHANGE:** Controller actions no longer default to a 201 (Created) status for `POST` requests.
+  Every verb now defaults to 200, and actions must opt in to a different status via the new `status`
+  annotation parameter (e.g. `@[Post("/users", status: 201)]`) or by setting `response.status_code` directly.
+
 ## 0.3.0 - 2026-08-02
 
 ### Added

@@ -52,6 +52,8 @@ module Kemal
   # - `path` : String - The URL path for the route (can include path parameters like `:id`)
   # - `auth` : Bool - If true, requires authentication via `authenticate!` method (default: false)
   # - `strip` : Bool | Array(Symbol) - If true, strips all parameters; if array, strips only specified parameters (default: false)
+  # - `status` : Int32 - The HTTP status code to set before the action runs (default: 200). The action can still
+  #   override it, e.g. by calling `error`.
   #
   # ## Example
   #
@@ -59,6 +61,15 @@ module Kemal
   # @[Get("/users/:id")]
   # def show(id : Int32)
   #   "User #{id}"
+  # end
+  # ```
+  #
+  # ## Example with a custom status code
+  #
+  # ```
+  # @[Post("/users", status: 201)]
+  # def create(name : String)
+  #   "Creating user with name: #{name}"
   # end
   # ```
   #
@@ -98,6 +109,7 @@ module Kemal
       # - `path` : String - The URL path for the route (can include path parameters like `:id`)
       # - `auth` : Bool - If true, requires authentication via `authenticate!` method (default: false)
       # - `strip` : Bool | Array(Symbol) - If true, strips all parameters; if array, strips only specified parameters (default: false)
+      # - `status` : Int32 - The HTTP status code to set before the action runs (default: 200)
       #
       # See `Kemal::Controller` documentation for usage examples.
       annotation {{type.id}}
@@ -166,7 +178,7 @@ module Kemal
                   end
                 {% end %}
 
-                ctx.response.status_code = {{ verb.id.symbolize }} == :POST ? 201 : 200
+                ctx.response.status_code = {{ ann[:status] || 200 }}
 
                 %params = Kemal.parse_www_form(ctx)
                 {% for param in method.args %}
