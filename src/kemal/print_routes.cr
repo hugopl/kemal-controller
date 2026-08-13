@@ -44,6 +44,11 @@ module Kemal
               ws_routes_metadata.map { |socket, metadata| {method: "WS", path: socket.path, metadata: metadata} }
     entries.sort_by! { |entry| {entry[:path], entry[:method]} }
 
+    if entries.empty?
+      io.puts "No routes registered. Did you call Kemal.print_routes before requiring your controllers?"
+      return
+    end
+
     color_control_chars = Colorize.enabled? ? 10 : 0
     max_path_size : Int32 = entries.max_by(&.[:path].size)[:path].size + color_control_chars
 

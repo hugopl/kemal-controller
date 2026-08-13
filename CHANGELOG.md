@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Every verb now defaults to 200, and actions must opt in to a different status via the new `status`
   annotation parameter (e.g. `@[Post("/users", status: 201)]`) or by setting `response.status_code` directly.
 
+### Fixed
+
+- `Kemal.print_routes` no longer crashes with `Enumerable::EmptyError` when called before any routes are
+  registered; it now prints a hint instead.
+
 ## 0.3.0 - 2026-08-02
 
 ### Added
