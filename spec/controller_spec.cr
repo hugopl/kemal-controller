@@ -16,6 +16,11 @@ private struct TestController < Kemal::Controller
     "Parameter: #{parameter}"
   end
 
+  @[Get("/sign_in")]
+  def sign_in(next url : String)
+    "Next: #{url}"
+  end
+
   @[Get("/strip", strip: true)]
   def strip(something : String)
     something
@@ -101,6 +106,11 @@ describe Kemal::Controller do
   it "can handle route parameters" do
     get("/route/Testing123/allowed")
     response.body.should eq("Parameter: Testing123")
+  end
+
+  it "maps the external parameter name to the request param, using the internal name in the body" do
+    get("/sign_in?next=%2Fdashboard")
+    response.body.should eq("Next: /dashboard")
   end
 
   it "can handle named tuples from POST parameters" do

@@ -47,6 +47,11 @@ module Kemal
   # - `items[]=1&items[]=2` becomes `items : Array(Int32)`
   # - `items[][id]=1&items[][quantity]=2` becomes `items : Array(NamedTuple(id: Int32, quantity: Int32))`
   #
+  # A parameter's external name (the one looked up in the request) can differ from the name used in the
+  # method body by giving it an internal name, same as any other Crystal method. This is required when the
+  # request field name is a reserved word, e.g. `def sign_in(next url : String)` maps the `next` request
+  # parameter to the local variable `url`.
+  #
   # ## Route annotation parameters
   #
   # - `path` : String - The URL path for the route (can include path parameters like `:id`)
@@ -213,7 +218,7 @@ module Kemal
                   {% end %}
                   {% type = param.restriction.resolve %}
                   {% if param.default_value %}
-                    {{ param.name.id }} = begin
+                    {{ param.internal_name.id }} = begin
                       {{ type }}.from_www_form({{ param.name.stringify }}, %params)
                     rescue ex : Kemal::ParamError
                       if ex.reason.missing?
@@ -224,7 +229,7 @@ module Kemal
                       end
                     end
                   {% else %}
-                    {{ param.name.id }} = begin
+                    {{ param.internal_name.id }} = begin
                       {{ type }}.from_www_form({{ param.name.stringify }}, %params)
                     rescue ex : Kemal::ParamError
                       %any_cast_error = true
@@ -233,15 +238,15 @@ module Kemal
                   {% end %}
 
                   {% strip = ann[:strip] %}
-                  {% if strip && (strip == true || strip.includes?(param.name.id.symbolize)) %}
-                    {{ param.name.id }} = {{ param.name.id }}.strip if {{ param.name.id }}.responds_to?(:strip)
+                  {% if strip && (strip == true || strip.includes?(param.internal_name.id.symbolize)) %}
+                    {{ param.internal_name.id }} = {{ param.internal_name.id }}.strip if {{ param.internal_name.id }}.responds_to?(:strip)
                   {% end %}
                 {% end %}
 
                 if %any_cast_error
-                  %controller.{{method.name.id}}_on_cast_error({% for param in method.args %}{{ param.name.id }}, {% end %})
+                  %controller.{{method.name.id}}_on_cast_error({% for param in method.args %}{{ param.internal_name.id }}, {% end %})
                 else
-                  %controller.{{method.name.id}}({% for param in method.args %}{{ param.name.id }}.as({{ param.restriction.resolve }}), {% end %})
+                  %controller.{{method.name.id}}({% for param in method.args %}{{ param.internal_name.id }}.as({{ param.restriction.resolve }}), {% end %})
                 end
               end
             {% end %}
@@ -274,23 +279,23 @@ module Kemal
                 {% end %}
                 {% type = param.restriction.resolve %}
                 {% if param.default_value %}
-                  {{ param.name.id }} = begin
+                  {{ param.internal_name.id }} = begin
                     {{ type }}.from_www_form({{ param.name.stringify }}, %params)
                   rescue ex : Kemal::ParamError
                     raise ex unless ex.reason.missing?
                     {{ param.default_value }}
                   end
                 {% else %}
-                  {{ param.name.id }} = {{ type }}.from_www_form({{ param.name.stringify }}, %params)
+                  {{ param.internal_name.id }} = {{ type }}.from_www_form({{ param.name.stringify }}, %params)
                 {% end %}
 
                 {% strip = ws_ann[:strip] %}
-                {% if strip && (strip == true || strip.includes?(param.name.id.symbolize)) %}
-                  {{ param.name.id }} = {{ param.name.id }}.strip if {{ param.name.id }}.responds_to?(:strip)
+                {% if strip && (strip == true || strip.includes?(param.internal_name.id.symbolize)) %}
+                  {{ param.internal_name.id }} = {{ param.internal_name.id }}.strip if {{ param.internal_name.id }}.responds_to?(:strip)
                 {% end %}
               {% end %}
 
-              %controller.{{method.name.id}}({% for param in method.args %}{{ param.name.id }}, {% end %})
+              %controller.{{method.name.id}}({% for param in method.args %}{{ param.internal_name.id }}, {% end %})
             end
           {% end %}
         {% end %}
@@ -308,9 +313,9 @@ module Kemal
                   # failed to cast, in declared order, so behaviour is unchanged for
                   # controllers that don't define their own hook.
                   @[AlwaysInline]
-                  def {{ hook_name.id }}({% for param in method.args %}{{ param.name.id }}, {% end %})
+                  def {{ hook_name.id }}({% for param in method.args %}{{ param.internal_name.id }}, {% end %})
                     {% for param in method.args %}
-                      raise {{ param.name.id }} if {{ param.name.id }}.is_a?(Kemal::ParamError)
+                      raise {{ param.internal_name.id }} if {{ param.internal_name.id }}.is_a?(Kemal::ParamError)
                     {% end %}
                   end
                 {% end %}

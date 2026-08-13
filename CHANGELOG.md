@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   restrictions) to recover from a parameter that's missing or fails to cast, instead of letting the error
   propagate. Every parameter is now cast independently, so a single bad value no longer stops the rest from
   being cast too. Controllers that don't define the hook keep today's behaviour unchanged.
+- Support parameters with a separate external/internal name, e.g. `def sign_in(next url : String)` reads the
+  `next` request parameter into the local variable `url`. This allows request fields named after Crystal
+  reserved words, which previously failed to compile.
 
 ### Changed
 
