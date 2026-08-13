@@ -88,24 +88,62 @@ More types may be added in the future, feel free to open an issue or a PR if you
 
 ### Error handling
 
-Two exceptions are raised for bad request parameters:
+`Kemal::ParamError` is raised for bad request parameters — either a
+required (non-nilable, no default) parameter that was not present in the
+request, or one that was present but couldn't be coerced to the declared type
+(e.g. `"foo"` for an `Int32`, an unrecognised enum member, or an invalid
+boolean literal). Its `reason` getter (a `Kemal::ParamError::Reason` enum)
+tells you which: `Missing` or `CastError`. `param_name` is always set;
+`expected_type` and `value` are only set when `reason` is `CastError`.
 
-- `Kemal::MissingParameterError` — a required (non-nilable, no default) parameter was not present in the request.
-- `Kemal::InvalidParameterError` — the parameter was present but its value could not be coerced to the declared type (e.g. `"foo"` for an `Int32`, an unrecognised enum member, or an invalid boolean literal).
-
-Both inherit from `Exception`. You can handle them with Kemal's exception-specific error handlers:
+It inherits from `Exception`, so you can handle it with Kemal's
+exception-specific error handler:
 
 ```Crystal
-error Kemal::MissingParameterError do |env, ex|
-  env.response.status_code = 400
-  ex.message
-end
-
-error Kemal::InvalidParameterError do |env, ex|
-  env.response.status_code = 422
+error Kemal::ParamError do |env, ex|
+  env.response.status_code = ex.reason.missing? ? 400 : 422
   ex.message
 end
 ```
+
+See "Handling cast errors per-action" below for opting a single action into
+recovering from these instead of letting them propagate.
+
+### Handling cast errors per-action
+
+If you'd rather recover from a bad parameter inside a specific action — to
+re-render a form with a per-field error, for instance — define a sibling
+`{action}_on_cast_error` method with the same parameter names, in the same
+order, but with no type restrictions:
+
+```Crystal
+struct UsersController < Kemal::Controller
+  @[Post("/users")]
+  def create(name : String, age : Int32)
+    "Creating user with name: #{name}, age: #{age}"
+  end
+
+  def create_on_cast_error(name, age)
+    # Both `name` and `age` are unions with `Kemal::ParamError`, since either
+    # can be missing, and `age` can also fail to cast.
+    if age.is_a?(Kemal::ParamError)
+      age.reason.missing? ? "age is required" : "age: #{age.value.inspect} is not a number"
+    else
+      "age was fine: #{age}"
+    end
+  end
+end
+```
+
+When `create` runs, every parameter is cast independently — a bad `age`
+doesn't stop `name` from being cast too. If any parameter fails, `create` is
+skipped entirely and `create_on_cast_error` is called instead, receiving each
+parameter as either its successfully cast value or the `Kemal::ParamError`
+for that specific parameter. If none fail, `create` runs as usual with fully
+typed, narrowed parameters.
+
+This is entirely opt-in: a controller that never defines `_on_cast_error`
+methods keeps today's behaviour of letting `Kemal::ParamError` propagate.
 
 ### Enums
 

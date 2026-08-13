@@ -100,6 +100,31 @@ module Kemal
   #   # Only email will be stripped, password remains unchanged
   # end
   # ```
+  #
+  # ## Example with a Cast-Error Hook
+  #
+  # By default, if a required parameter is missing, or is present but fails to
+  # cast to its declared type (e.g. `age=foo` for `age : Int32`),
+  # `Kemal::ParamError` propagates uncaught. Define an opt-in
+  # `{action}_on_cast_error` method, with the same parameters as the action but
+  # with no type restrictions, to render a response instead:
+  #
+  # ```
+  # @[Post("/users")]
+  # def create(name : String, age : Int32)
+  #   "Creating user with name: #{name}, age: #{age}"
+  # end
+  #
+  # def create_on_cast_error(name, age)
+  #   # Both `name` and `age` are unions with `Kemal::ParamError`, since
+  #   # either can be missing, and `age` can also fail to cast.
+  #   if age.is_a?(Kemal::ParamError)
+  #     age.reason.missing? ? "age is required" : "age: #{age.value.inspect} is not a number"
+  #   else
+  #     "age was fine: #{age}"
+  #   end
+  # end
+  # ```
   abstract struct Controller
     {% for type in %w(Get Post Put Patch Delete Head Options) %}
       # Annotation to define a {{type.id}} route for a controller method.
@@ -181,6 +206,7 @@ module Kemal
                 ctx.response.status_code = {{ ann[:status] || 200 }}
 
                 %params = Kemal.parse_www_form(ctx)
+                %any_cast_error = false
                 {% for param in method.args %}
                   {% if !param.restriction %}
                     {% raise "Parameter '#{param.name}' in #{@type.name}##{method.name} must have an explicit type annotation, e.g. '#{param.name} : String'." %}
@@ -189,11 +215,21 @@ module Kemal
                   {% if param.default_value %}
                     {{ param.name.id }} = begin
                       {{ type }}.from_www_form({{ param.name.stringify }}, %params)
-                    rescue Kemal::MissingParameterError
-                      {{ param.default_value }}
+                    rescue ex : Kemal::ParamError
+                      if ex.reason.missing?
+                        {{ param.default_value }}
+                      else
+                        %any_cast_error = true
+                        ex
+                      end
                     end
                   {% else %}
-                    {{ param.name.id }} = {{ type }}.from_www_form({{ param.name.stringify }}, %params)
+                    {{ param.name.id }} = begin
+                      {{ type }}.from_www_form({{ param.name.stringify }}, %params)
+                    rescue ex : Kemal::ParamError
+                      %any_cast_error = true
+                      ex
+                    end
                   {% end %}
 
                   {% strip = ann[:strip] %}
@@ -202,7 +238,11 @@ module Kemal
                   {% end %}
                 {% end %}
 
-                %controller.{{method.name.id}}({% for param in method.args %}{{ param.name.id }}, {% end %})
+                if %any_cast_error
+                  %controller.{{method.name.id}}_on_cast_error({% for param in method.args %}{{ param.name.id }}, {% end %})
+                else
+                  %controller.{{method.name.id}}({% for param in method.args %}{{ param.name.id }}.as({{ param.restriction.resolve }}), {% end %})
+                end
               end
             {% end %}
           {% end %}
@@ -236,7 +276,8 @@ module Kemal
                 {% if param.default_value %}
                   {{ param.name.id }} = begin
                     {{ type }}.from_www_form({{ param.name.stringify }}, %params)
-                  rescue Kemal::MissingParameterError
+                  rescue ex : Kemal::ParamError
+                    raise ex unless ex.reason.missing?
                     {{ param.default_value }}
                   end
                 {% else %}
@@ -251,6 +292,30 @@ module Kemal
 
               %controller.{{method.name.id}}({% for param in method.args %}{{ param.name.id }}, {% end %})
             end
+          {% end %}
+        {% end %}
+      end
+
+      macro finished
+        {% verbatim do %}
+          {% for method in @type.methods %}
+            {% for http_verb in [Get, Post, Put, Patch, Delete, Head, Options] %}
+              {% ann = method.annotation(http_verb.resolve) %}
+              {% if ann %}
+                {% hook_name = "#{method.name}_on_cast_error" %}
+                {% unless @type.has_method?(hook_name) %}
+                  # Default `_on_cast_error` hook: re-raises the first parameter that
+                  # failed to cast, in declared order, so behaviour is unchanged for
+                  # controllers that don't define their own hook.
+                  @[AlwaysInline]
+                  def {{ hook_name.id }}({% for param in method.args %}{{ param.name.id }}, {% end %})
+                    {% for param in method.args %}
+                      raise {{ param.name.id }} if {{ param.name.id }}.is_a?(Kemal::ParamError)
+                    {% end %}
+                  end
+                {% end %}
+              {% end %}
+            {% end %}
           {% end %}
         {% end %}
       end

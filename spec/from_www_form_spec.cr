@@ -28,9 +28,9 @@ describe "#from_www_form" do
       String.from_www_form("key", params).should eq("  value  ")
     end
 
-    it "raises MissingParameterError for missing key" do
+    it "raises ParamError with reason Missing for missing key" do
       params = [{"other", "value", false}]
-      expect_raises(Kemal::MissingParameterError, "Missing parameter: missing") do
+      expect_raises(Kemal::ParamError, "Missing parameter: missing") do
         String.from_www_form("missing", params)
       end
     end
@@ -103,14 +103,27 @@ describe "#from_www_form" do
 
     it "raises for invalid integer format" do
       params = [{"key", "not_a_number", false}]
-      expect_raises(Kemal::InvalidParameterError) do
+      expect_raises(Kemal::ParamError) do
         Int32.from_www_form("key", params)
+      end
+    end
+
+    it "exposes param_name, reason, expected_type and value on the error" do
+      params = [{"key", "not_a_number", false}]
+      begin
+        Int32.from_www_form("key", params)
+        fail "expected Int32.from_www_form to raise"
+      rescue ex : Kemal::ParamError
+        ex.param_name.should eq("key")
+        ex.reason.should eq(Kemal::ParamError::Reason::CastError)
+        ex.expected_type.should eq("Int32")
+        ex.value.should eq("not_a_number")
       end
     end
 
     it "raises for empty string" do
       params = [{"key", "", false}]
-      expect_raises(Kemal::InvalidParameterError) do
+      expect_raises(Kemal::ParamError) do
         Int32.from_www_form("key", params)
       end
     end
@@ -134,7 +147,7 @@ describe "#from_www_form" do
 
     it "raises for invalid int64 format" do
       params = [{"key", "invalid", false}]
-      expect_raises(Kemal::InvalidParameterError) do
+      expect_raises(Kemal::ParamError) do
         Int64.from_www_form("key", params)
       end
     end
@@ -155,21 +168,21 @@ describe "#from_www_form" do
 
     it "raises for invalid boolean values" do
       params = [{"key", "maybe", false}]
-      expect_raises(Kemal::InvalidParameterError) do
+      expect_raises(Kemal::ParamError) do
         Bool.from_www_form("key", params)
       end
     end
 
     it "raises for empty boolean values" do
       params = [{"key", "", false}]
-      expect_raises(Kemal::InvalidParameterError) do
+      expect_raises(Kemal::ParamError) do
         Bool.from_www_form("key", params)
       end
     end
 
     it "raises for case-sensitive boolean values" do
       params = [{"key", "TRUE", false}]
-      expect_raises(Kemal::InvalidParameterError) do
+      expect_raises(Kemal::ParamError) do
         Bool.from_www_form("key", params)
       end
     end
@@ -217,7 +230,7 @@ describe "#from_www_form" do
 
     it "raises when required fields are missing" do
       params = [{"key[name]", "value1", false}]
-      expect_raises(Kemal::MissingParameterError, "Missing parameter: age") do
+      expect_raises(Kemal::ParamError, "Missing parameter: age") do
         NamedTuple(name: String, age: Int32).from_www_form("key", params)
       end
     end

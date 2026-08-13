@@ -7,11 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Opt-in `{action}_on_cast_error` hook: define a sibling method (same parameter names and order, no type
+  restrictions) to recover from a parameter that's missing or fails to cast, instead of letting the error
+  propagate. Every parameter is now cast independently, so a single bad value no longer stops the rest from
+  being cast too. Controllers that don't define the hook keep today's behaviour unchanged.
+
 ### Changed
 
 - **BREAKING CHANGE:** Controller actions no longer default to a 201 (Created) status for `POST` requests.
   Every verb now defaults to 200, and actions must opt in to a different status via the new `status`
   annotation parameter (e.g. `@[Post("/users", status: 201)]`) or by setting `response.status_code` directly.
+- **BREAKING CHANGE:** Replaced `MissingParameterError` and `InvalidParameterError` with a single
+  `Kemal::ParamError`, whose `reason` getter (`Kemal::ParamError::Reason::Missing` or `::CastError`) tells
+  you which happened. `param_name` is always set; `expected_type` and `value` are only set for `CastError`.
 
 ### Fixed
 

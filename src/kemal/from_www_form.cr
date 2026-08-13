@@ -21,46 +21,49 @@ module Kemal
   class_property redacted_parameters = %w(passw secret token _key crypt salt
     certificate otp ssn cvv cvc)
 
-  # Exception raised when a required parameter is not present in the request.
-  #
-  # This error is raised when a controller method declares a non-nilable parameter
-  # but the corresponding key is missing from the request data (query string, body,
-  # or URL segments).
+  # Exception raised when a parameter is missing from the request, or is
+  # present but its value cannot be converted to the declared type.
   #
   # ## Example
   #
   # ```
   # @[Get("/users")]
-  # def index(name : String) # name is required
-  #   "Hello, #{name}"
+  # def index(name : String, age : Int32)
+  #   "Hello, #{name}, age #{age}"
   # end
-  # # GET /users without ?name=... will raise Kemal::MissingParameterError
+  # # GET /users?age=30 (no name=...) raises Kemal::ParamError for "name",
+  # #   reason: Missing
+  # # GET /users?name=Ary&age=foo raises Kemal::ParamError for "age",
+  # #   reason: CastError
   # ```
-  class MissingParameterError < Exception
-    def initialize(param_name : String)
-      super("Missing parameter: #{param_name}")
+  class ParamError < Exception
+    # Why a parameter failed: it was absent from the request (`Missing`), or
+    # it was present but couldn't be converted to the declared type (`CastError`).
+    enum Reason
+      Missing
+      CastError
     end
-  end
 
-  # Exception raised when a parameter is present but its value cannot be
-  # converted to the declared type.
-  #
-  # This error is raised when a controller method declares a typed parameter
-  # and the value exists in the request but fails type coercion (e.g. `"foo"`
-  # for an `Int32`, an unrecognised enum member, or an invalid boolean literal).
-  #
-  # ## Example
-  #
-  # ```
-  # @[Get("/users")]
-  # def index(age : Int32)
-  #   "Age: #{age}"
-  # end
-  # # GET /users?age=foo will raise Kemal::InvalidParameterError
-  # ```
-  class InvalidParameterError < Exception
-    def initialize(param_name : String, expected_type : String, value)
-      super("Invalid value #{value.inspect} for parameter '#{param_name}': expected #{expected_type}")
+    # The name of the parameter that failed.
+    getter param_name : String
+
+    # Why the parameter failed.
+    getter reason : Reason
+
+    # The Crystal type name the parameter was declared as. `nil` when `reason` is `Missing`.
+    getter expected_type : String?
+
+    # The raw, unparsed value that was posted for this parameter. `nil` when `reason` is `Missing`.
+    getter value : String?
+
+    def initialize(@param_name, @reason, @expected_type = nil, @value = nil)
+      message = case @reason
+                in .missing?
+                  "Missing parameter: #{param_name}"
+                in .cast_error?
+                  "Invalid value #{value.inspect} for parameter '#{param_name}': expected #{expected_type}"
+                end
+      super(message)
     end
   end
 
@@ -129,7 +132,8 @@ def Union.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 =
   {% type = (T - {Nil}).first %}
   {{ type }}.from_www_form(name, params, offset)
   {% end %}
-rescue Kemal::MissingParameterError
+rescue ex : Kemal::ParamError
+  raise ex unless ex.reason.missing?
   nil
 end
 
@@ -147,26 +151,27 @@ def String.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 
     end
     offset += 1
   end
-  raise Kemal::MissingParameterError.new(name)
+  raise Kemal::ParamError.new(name, :missing)
 end
 
 # :nodoc:
 def Int32.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : Int32
   value = String.from_www_form(name, params, offset)
-  value.to_i32? || raise Kemal::InvalidParameterError.new(name, "Int32", value)
+  value.to_i32? || raise Kemal::ParamError.new(name, :cast_error, "Int32", value)
 end
 
 # :nodoc:
 def Int64.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : Int64
   value = String.from_www_form(name, params, offset)
-  value.to_i64? || raise Kemal::InvalidParameterError.new(name, "Int64", value)
+  value.to_i64? || raise Kemal::ParamError.new(name, :cast_error, "Int64", value)
 end
 
 # :nodoc:
 def Bool.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : Bool
   begin
     value = String.from_www_form(name, params, offset)
-  rescue Kemal::MissingParameterError
+  rescue ex : Kemal::ParamError
+    raise ex unless ex.reason.missing?
     return false
   end
 
@@ -176,7 +181,7 @@ def Bool.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 
   when "false", "0"
     false
   else
-    raise Kemal::InvalidParameterError.new(name, "Bool", value)
+    raise Kemal::ParamError.new(name, :cast_error, "Bool", value)
   end
 end
 
@@ -227,7 +232,7 @@ def NamedTuple.from_www_form(name : String, params : Kemal::WWWForm, offset : In
     {% elsif @type[key] < Array %}
       key_{{ key }} = {{ @type[key] }}.new
     {% else %}
-      raise Kemal::MissingParameterError.new("{{ key }}")
+      raise Kemal::ParamError.new("{{ key }}", :missing)
     {% end %}
     end
   {% end %}
@@ -255,5 +260,5 @@ def Enum.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 
     parse(value)
   end
 rescue ex : ArgumentError
-  raise Kemal::InvalidParameterError.new(name, T.to_s, value)
+  raise Kemal::ParamError.new(name, :cast_error, T.to_s, value)
 end
