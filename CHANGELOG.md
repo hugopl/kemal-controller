@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `Kemal.print_routes` no longer crashes with `Enumerable::EmptyError` when called before any routes are
   registered; it now prints a hint instead.
+- A nilable parameter sent with an empty value (e.g. `?number=` for `number : Int32?`) is now `nil` instead
+  of raising a `CastError`. `String?` still reads an empty value as `""`.
 
 ## 0.3.0 - 2026-08-02
 

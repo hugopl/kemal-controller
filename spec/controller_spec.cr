@@ -169,6 +169,11 @@ describe Kemal::Controller do
     response.body.should eq("100")
   end
 
+  it "casts an empty value for a nilable parameter to nil" do
+    get("/nilable?number=")
+    response.body.should eq("nil")
+  end
+
   it "uses default values when parameters are absent" do
     get("/defaults")
     response.body.should eq("Hello x3")

@@ -133,7 +133,9 @@ def Union.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 =
   {{ type }}.from_www_form(name, params, offset)
   {% end %}
 rescue ex : Kemal::ParamError
-  raise ex unless ex.reason.missing?
+  # An absent parameter, or one sent with an empty value (e.g. an untouched form
+  # field, `?number=`), is nil rather than an error for a nilable type.
+  raise ex unless ex.reason.missing? || ex.value.try(&.empty?)
   nil
 end
 

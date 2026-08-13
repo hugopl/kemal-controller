@@ -83,6 +83,38 @@ describe "#from_www_form" do
       params = [{"other", "value", false}]
       (Int32?).from_www_form("missing", params).should eq(nil)
     end
+
+    it "returns nil for empty nullable int params" do
+      params = [{"key", "", false}]
+      (Int32?).from_www_form("key", params).should eq(nil)
+    end
+
+    it "returns nil for empty nullable int64 params" do
+      params = [{"key", "", false}]
+      (Int64?).from_www_form("key", params).should eq(nil)
+    end
+
+    it "returns nil for empty nullable bool params" do
+      params = [{"key", "", false}]
+      (Bool?).from_www_form("key", params).should eq(nil)
+    end
+
+    it "returns nil for empty nullable enum params" do
+      params = [{"key", "", false}]
+      (HTTP::Status?).from_www_form("key", params).should eq(nil)
+    end
+
+    it "keeps empty nullable string params as an empty string" do
+      params = [{"key", "", false}]
+      (String?).from_www_form("key", params).should eq("")
+    end
+
+    it "still raises for a non-empty invalid nullable int param" do
+      params = [{"key", "not_a_number", false}]
+      expect_raises(Kemal::ParamError) do
+        (Int32?).from_www_form("key", params)
+      end
+    end
   end
 
   describe "Int32.from_www_form" do
