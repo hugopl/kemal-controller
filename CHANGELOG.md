@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `Kemal::Routes`, a module of URL helpers generated from the route annotations, one per route, named
+  `{controller}_{action}` — e.g. `Kemal::Routes.sites_show("lab1")` for `SitesController#show`. Path
+  parameters are positional arguments, typed after the action's own parameters and escaped with
+  `URI.encode_path_segment`; extra keyword arguments become query parameters, skipping `nil` values. The new
+  `as` route annotation parameter picks the helper name, e.g. `@[Get("/sites/:code", as: site)]`.
 - Opt-in `{action}_on_cast_error` hook: define a sibling method (same parameter names and order, no type
   restrictions) to recover from a parameter that's missing or fails to cast, instead of letting the error
   propagate. Every parameter is now cast independently, so a single bad value no longer stops the rest from

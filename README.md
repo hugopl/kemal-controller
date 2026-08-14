@@ -247,6 +247,51 @@ On `--routes` your app will print something like:
 5 routes
 ```
 
+### URL helpers
+
+Every route also gets a method in `Kemal::Routes` that builds its URL, so paths
+are written once — in the annotation — instead of being repeated wherever you
+link to them.
+
+Helpers are named `{controller}_{action}`: the trailing `Controller` is dropped,
+`::` becomes `_`, and the rest is underscored. Pass `as` to pick a nicer name.
+
+```Crystal
+struct UsersController < Kemal::Controller
+  @[Get("/users/:username")]
+  def show(username : String)
+    "User #{username}"
+  end
+
+  @[Get("/users/new", as: new_user)]
+  def new
+    "New user form"
+  end
+end
+
+Kemal::Routes.users_show("john doe")  # => "/users/john%20doe"
+Kemal::Routes.new_user                # => "/users/new"
+```
+
+Path parameters become positional arguments, in the order they appear in the
+path, typed after the action's own parameter of the same name. They're escaped
+with `URI.encode_path_segment`, except for glob parameters (`*path`), which keep
+their slashes.
+
+Any extra keyword argument is appended as a query parameter, and `nil` values
+are skipped:
+
+```Crystal
+Kemal::Routes.users_show("john", tab: "profile", q: nil)
+# => "/users/john?tab=profile"
+```
+
+`Kemal::Routes` is an `extend self` module, so you can either call the helpers
+on it or `include Kemal::Routes` into your views and models.
+
+Two routes with different paths generating the same helper name is a
+compile-time error; give at least one of them an `as` name.
+
 ## Installation
 
 1. Add the dependency to your `shard.yml`:

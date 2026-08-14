@@ -2,6 +2,7 @@ require "./from_www_form"
 require "../ext/route_handler"
 require "../ext/websocket_handler"
 require "./print_routes"
+require "./routes"
 
 module Kemal
   # Abstract controller class that provides a structured way to define HTTP endpoints.
@@ -59,6 +60,7 @@ module Kemal
   # - `strip` : Bool | Array(Symbol) - If true, strips all parameters; if array, strips only specified parameters (default: false)
   # - `status` : Int32 - The HTTP status code to set before the action runs (default: 200). The action can still
   #   override it, e.g. by calling `error`.
+  # - `as` : Symbol - The name of the route's URL helper in `Kemal::Routes` (default: `{controller}_{action}`)
   #
   # ## Example
   #
@@ -140,6 +142,7 @@ module Kemal
       # - `auth` : Bool - If true, requires authentication via `authenticate!` method (default: false)
       # - `strip` : Bool | Array(Symbol) - If true, strips all parameters; if array, strips only specified parameters (default: false)
       # - `status` : Int32 - The HTTP status code to set before the action runs (default: 200)
+      # - `as` : Symbol - The name of the route's URL helper in `Kemal::Routes` (default: `{controller}_{action}`)
       #
       # See `Kemal::Controller` documentation for usage examples.
       annotation {{type.id}}
@@ -158,6 +161,7 @@ module Kemal
     # - `path` : String - The URL path for the route (can include path parameters like `:id`)
     # - `auth` : Bool - If true, requires authentication via `authenticate!` method (default: false)
     # - `strip` : Bool | Array(Symbol) - If true, strips all parameters; if array, strips only specified parameters (default: false)
+    # - `as` : Symbol - The name of the route's URL helper in `Kemal::Routes` (default: `{controller}_{action}`)
     #
     # NOTE: Unlike HTTP routes, by the time a `@[WebSocket]` method runs the handshake response
     # has already been sent, so `auth: true` can't reply with a 401, it closes the socket instead
@@ -324,6 +328,11 @@ module Kemal
           {% end %}
         {% end %}
       end
+    end
+
+    # Generates the `Kemal::Routes` URL helpers, once every controller is known.
+    macro finished
+      Kemal.define_route_helpers
     end
 
     # The HTTP server context for the current request.
