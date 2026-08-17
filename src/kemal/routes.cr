@@ -98,7 +98,7 @@ module Kemal
                       {% if segment.starts_with?(":") || segment.starts_with?("*") %}
                         {% param = segment[1..-1] %}
                         {% param = "splat" if param.empty? %}
-                        {% arg = method.args.find { |a| a.name.stringify == param } %}
+                        {% arg = method.args.find { |argument| argument.name.stringify == param } %}
                         {{ param.id }} : {{ (arg && arg.restriction) ? arg.restriction : String }},
                       {% end %}
                     {% end %}
