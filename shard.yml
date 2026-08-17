@@ -12,5 +12,6 @@ dependencies:
 development_dependencies:
   spec-kemal:
     github: kemalcr/spec-kemal
+    version: '>= 1.2.0'
   kemal-session:
     github: kemalcr/kemal-session
