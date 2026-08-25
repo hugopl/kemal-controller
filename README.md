@@ -196,6 +196,27 @@ struct AdminController < Kemal::Controller
 end
 ```
 
+### Requiring explicit `auth:` on every route
+
+By default a route annotation that omits `auth` entirely is public, same as
+`auth: false`. If you'd rather have that be a compile error, so a route
+can never become accidentally public just because someone forgot the
+`auth:` key, build (or run specs) with the `kemal_controller_require_auth`
+flag:
+
+```sh
+crystal build src/app.cr -Dkemal_controller_require_auth
+```
+
+With the flag enabled, every route annotation must set `auth:` to either
+`true` or `false`; omitting it fails the build with an error naming the
+controller, method and verb. `auth: false` remains the way to mark a route
+intentionally public; it's just no longer implied by silence.
+
+The flag only affects compilation; it's not a `shard.yml` setting, since
+`-D` flags are supplied by whoever builds the final application, not by the
+shard itself.
+
 ### WebSocket routes
 
 WebSocket endpoints are declared with `@[WebSocket]`, taking advantage of Kemal's

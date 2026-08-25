@@ -56,7 +56,8 @@ module Kemal
   # ## Route annotation parameters
   #
   # - `path` : String - The URL path for the route (can include path parameters like `:id`)
-  # - `auth` : Bool - If true, requires authentication via `authenticate!` method (default: false)
+  # - `auth` : Bool - If true, requires authentication via `authenticate!` method (default: false). Must be
+  #   set explicitly when compiled with the `kemal_controller_require_auth` flag.
   # - `strip` : Bool | Array(Symbol) - If true, strips all parameters; if array, strips only specified parameters (default: false)
   # - `status` : Int32 - The HTTP status code to set before the action runs (default: 200). The action can still
   #   override it, e.g. by calling `error`.
@@ -139,7 +140,8 @@ module Kemal
       # ## Parameters
       #
       # - `path` : String - The URL path for the route (can include path parameters like `:id`)
-      # - `auth` : Bool - If true, requires authentication via `authenticate!` method (default: false)
+      # - `auth` : Bool - If true, requires authentication via `authenticate!` method (default: false). Must be
+      #   set explicitly when compiled with the `kemal_controller_require_auth` flag.
       # - `strip` : Bool | Array(Symbol) - If true, strips all parameters; if array, strips only specified parameters (default: false)
       # - `status` : Int32 - The HTTP status code to set before the action runs (default: 200)
       # - `as` : Symbol - The name of the route's URL helper in `Kemal::Routes` (default: `{controller}_{action}`)
@@ -159,7 +161,8 @@ module Kemal
     # ## Parameters
     #
     # - `path` : String - The URL path for the route (can include path parameters like `:id`)
-    # - `auth` : Bool - If true, requires authentication via `authenticate!` method (default: false)
+    # - `auth` : Bool - If true, requires authentication via `authenticate!` method (default: false). Must be
+    #   set explicitly when compiled with the `kemal_controller_require_auth` flag.
     # - `strip` : Bool | Array(Symbol) - If true, strips all parameters; if array, strips only specified parameters (default: false)
     # - `as` : Symbol - The name of the route's URL helper in `Kemal::Routes` (default: `{controller}_{action}`)
     #
@@ -194,6 +197,12 @@ module Kemal
             {% ann = method.annotation(http_verb.resolve) %}
             {% if ann %}
               {% verb = http_verb.stringify.split("::").last.upcase %}
+              {% if flag?(:kemal_controller_require_auth) && ann[:auth] == nil %}
+                {% raise "#{@type.name}##{method.name}'s '#{verb.id}' route annotation is missing an explicit " +
+                         "'auth:' key. Add 'auth: true' if the route must be authenticated, or 'auth: false' " +
+                         "to mark it intentionally public. Required because the 'kemal_controller_require_auth' " +
+                         "compile-time flag is enabled." %}
+              {% end %}
               {% url = ann[0] %}
               Kemal::RouteHandler::INSTANCE.add_route({{ verb }}, {{ url }},
                                                       {{ "#{@type.id}##{method.name}(#{method.args.join(", ").id})" }},
@@ -258,6 +267,12 @@ module Kemal
 
           {% ws_ann = method.annotation(WebSocket) %}
           {% if ws_ann %}
+            {% if flag?(:kemal_controller_require_auth) && ws_ann[:auth] == nil %}
+              {% raise "#{@type.name}##{method.name}'s 'WebSocket' route annotation is missing an explicit " +
+                       "'auth:' key. Add 'auth: true' if the connection must be authenticated, or 'auth: false' " +
+                       "to mark it intentionally public. Required because the 'kemal_controller_require_auth' " +
+                       "compile-time flag is enabled." %}
+            {% end %}
             {% url = ws_ann[0] %}
             Kemal::WebSocketHandler::INSTANCE.add_route({{ url }},
                                                     {{ "#{@type.id}##{method.name}(#{method.args.join(", ").id})" }},

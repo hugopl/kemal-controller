@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Opt-in `kemal_controller_require_auth` compile-time flag (`-Dkemal_controller_require_auth`): when set, every
+  route annotation (`Get`/`Post`/`Put`/`Patch`/`Delete`/`Head`/`Options`/`WebSocket`) must set `auth:` explicitly
+  to `true` or `false`; omitting the key fails the build instead of silently defaulting to public. Off by
+  default, so existing code is unaffected until opted in.
+
 ## 0.4.0 - 2026-08-17
 
 ### Added
