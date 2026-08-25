@@ -196,6 +196,65 @@ struct AdminController < Kemal::Controller
 end
 ```
 
+### Running filters before every route
+
+`before_all` registers one or more methods to run before every route declared in
+the same controller struct — and only that struct. It accepts symbols, bare names
+or strings, can be called more than once, and may appear anywhere in the struct
+body, before or after the routes it applies to. Filters run in declaration order.
+
+A filter runs after `authenticate!` (for `auth: true` routes) and after the
+route's `status:` has been applied, but before any parameter is parsed or cast.
+Its return value is ignored — to abort the request, call `halt`.
+
+Since a controller is a struct instantiated once per request, a filter can assign
+instance variables the action then reads.
+
+```Crystal
+struct PostsController < Kemal::Controller
+  before_all :load_current_user
+  before_all :require_admin
+
+  @user : String? = nil
+
+  @[Get("/posts")]
+  def index
+    "Welcome, #{@user}"
+  end
+
+  @[Get("/posts/:id")]
+  def show(id : Int32)
+    "Post #{id}"
+  end
+
+  private def load_current_user
+    @user = session.string?("user")
+  end
+
+  private def require_admin
+    halt(403, "Forbidden") unless @user == "admin"
+  end
+end
+```
+
+`halt(status_code = 200, response = "")` sets the response status and body and
+skips everything that follows. It works from filters, from actions and from any
+other method of the controller. On a `@[WebSocket]` route the handshake has
+already been answered by the time filters run, so a halt closes the socket with
+`HTTP::WebSocket::CloseCode::PolicyViolation` using `response` as the close
+reason.
+
+> [!NOTE]
+> Inside a controller, `halt` is kemal-controller's own macro and takes no
+> `env`/context argument. Kemal's top-level `halt` expands to `next`, so it was
+> never usable from a controller method anyway. Where the macro isn't in scope —
+> a helper defined in an included module, say — raise it directly with
+> `raise Kemal::Controller::Halt.new(403, "Forbidden")`.
+
+Filters compose through inheritance: an `abstract struct` controller declaring
+`before_all` passes its filters on to its subclasses, which run before any the
+subclass declares itself.
+
 ### Requiring explicit `auth:` on every route
 
 By default a route annotation that omits `auth` entirely is public, same as

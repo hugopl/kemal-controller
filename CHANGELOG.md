@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `before_all` macro to register methods that run before every route declared in a controller struct.
+  Accepts symbols, bare names or strings, may be called more than once, and composes through
+  inheritance from an `abstract struct` controller. Filters run in declaration order, after
+  `authenticate!` and after the route's `status:` is applied, but before any parameter is parsed.
+- `halt(status_code = 200, response = "")` to abort a request from a `before_all` filter, from an
+  action, or from any other controller method, plus the `Kemal::Controller::Halt` exception it
+  raises. Inside a controller this shadows Kemal's top-level `halt` macro and takes no `env`
+  argument; Kemal's version expands to `next`, so it never worked from a controller method.
 - Opt-in `kemal_controller_require_auth` compile-time flag (`-Dkemal_controller_require_auth`): when set, every
   route annotation (`Get`/`Post`/`Put`/`Patch`/`Delete`/`Head`/`Options`/`WebSocket`) must set `auth:` explicitly
   to `true` or `false`; omitting the key fails the build instead of silently defaulting to public. Off by

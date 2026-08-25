@@ -95,6 +95,33 @@ module Kemal
   # end
   # ```
   #
+  # ## Example with `before_all` Filters
+  #
+  # `before_all` registers methods to run before every route declared in the same controller
+  # struct, in declaration order. Filters run after `authenticate!` and after the route's
+  # `status:` has been applied, but before any parameter is parsed. Call `halt` from a filter
+  # (or from an action) to abort the request.
+  #
+  # ```
+  # struct AdminController < Kemal::Controller
+  #   before_all :load_current_user
+  #   before_all :require_admin
+  #
+  #   @[Get("/admin/dashboard")]
+  #   def dashboard
+  #     "Welcome, #{@user}"
+  #   end
+  #
+  #   private def load_current_user
+  #     @user = session.string?("user")
+  #   end
+  #
+  #   private def require_admin
+  #     halt(403, "Forbidden") unless @user == "admin"
+  #   end
+  # end
+  # ```
+  #
   # ## Example with Parameter Stripping
   #
   # ```
@@ -190,6 +217,106 @@ module Kemal
     # request processing.
     alias Errors = Hash(String, String)
 
+    # Raised by `halt` to abort the current request.
+    #
+    # The generated route handler rescues it, applies `status_code` to the response and
+    # returns `response` as the body. WebSocket routes close the socket with
+    # `HTTP::WebSocket::CloseCode::PolicyViolation` instead, using `response` as the reason.
+    #
+    # Raise it directly when `halt` isn't in scope, e.g. from a helper defined in an
+    # included module rather than in the controller itself:
+    #
+    # ```
+    # raise Kemal::Controller::Halt.new(403, "Forbidden")
+    # ```
+    class Halt < Exception
+      # The HTTP status code to respond with.
+      getter status_code : Int32
+
+      # The response body, or the WebSocket close reason.
+      getter response : String
+
+      def initialize(status : HTTP::Status | Int32 = 200, @response : String = "")
+        @status_code = status.to_i
+        super("Halted with status #{@status_code}")
+      end
+    end
+
+    # Aborts the current request by raising `Halt`.
+    #
+    # Usable from `before_all` filters, from actions, and from any other method of the
+    # controller. The action (and any remaining filters) are skipped.
+    #
+    # NOTE: This shadows Kemal's own top-level `halt` macro inside controllers, and takes no
+    # `env`/context argument. Kemal's version expands to `next`, so it never worked inside a
+    # controller method to begin with.
+    #
+    # ## Example
+    #
+    # ```
+    # before_all :ensure_setup
+    #
+    # def ensure_setup
+    #   halt(403, "Forbidden") unless Config.ready?
+    # end
+    # ```
+    macro halt(status_code = 200, response = "")
+      raise ::Kemal::Controller::Halt.new({{ status_code }}, {{ response }})
+    end
+
+    # Registers methods to run before every route declared in this controller.
+    #
+    # Accepts symbols, bare names or strings, and may be called more than once; filters run
+    # in declaration order, and only for routes declared in this controller struct. It can
+    # appear anywhere in the struct body, before or after the routes it applies to.
+    #
+    # Filters run after `authenticate!` (for `auth: true` routes) and after the route's
+    # `status:` has been applied, but before any parameter is parsed or cast. Their return
+    # value is ignored; call `halt` to abort the request.
+    #
+    # Since a controller is a struct that is instantiated per request, a filter can assign
+    # instance variables for the action to read.
+    #
+    # ## Example
+    #
+    # ```
+    # struct PostsController < Kemal::Controller
+    #   before_all :load_current_user
+    #   before_all :require_admin
+    #
+    #   @[Get("/posts")]
+    #   def index
+    #     "Hello #{@user}"
+    #   end
+    #
+    #   private def load_current_user
+    #     @user = session.string?("user")
+    #   end
+    #
+    #   private def require_admin
+    #     halt(403, "Forbidden") unless @user == "admin"
+    #   end
+    # end
+    # ```
+    macro before_all(*names)
+      {% for name in names %}
+        # :nodoc:
+        @[AlwaysInline]
+        def __before_all_{{ name.id }}
+          {{ name.id }}
+        end
+      {% end %}
+    end
+
+    # Runs this controller's `before_all` filters.
+    #
+    # No-op by default; controllers that call `before_all` get an override generated for them.
+    #
+    # :nodoc:
+    @[AlwaysInline]
+    def _run_before_all_filters : Nil
+    end
+
     macro inherited
       macro method_added(method)
         {% verbatim do %}
@@ -223,43 +350,50 @@ module Kemal
 
                 ctx.response.status_code = {{ ann[:status] || 200 }}
 
-                %params = Kemal.parse_www_form(ctx)
-                %any_cast_error = false
-                {% for param in method.args %}
-                  {% if !param.restriction %}
-                    {% raise "Parameter '#{param.name}' in #{@type.name}##{method.name} must have an explicit type annotation, e.g. '#{param.name} : String'." %}
-                  {% end %}
-                  {% type = param.restriction.resolve %}
-                  {% if param.default_value %}
-                    {{ param.internal_name.id }} = begin
-                      {{ type }}.from_www_form({{ param.name.stringify }}, %params)
-                    rescue ex : Kemal::ParamError
-                      if ex.reason.missing?
-                        {{ param.default_value }}
-                      else
+                begin
+                  %controller._run_before_all_filters
+
+                  %params = Kemal.parse_www_form(ctx)
+                  %any_cast_error = false
+                  {% for param in method.args %}
+                    {% if !param.restriction %}
+                      {% raise "Parameter '#{param.name}' in #{@type.name}##{method.name} must have an explicit type annotation, e.g. '#{param.name} : String'." %}
+                    {% end %}
+                    {% type = param.restriction.resolve %}
+                    {% if param.default_value %}
+                      {{ param.internal_name.id }} = begin
+                        {{ type }}.from_www_form({{ param.name.stringify }}, %params)
+                      rescue ex : Kemal::ParamError
+                        if ex.reason.missing?
+                          {{ param.default_value }}
+                        else
+                          %any_cast_error = true
+                          ex
+                        end
+                      end
+                    {% else %}
+                      {{ param.internal_name.id }} = begin
+                        {{ type }}.from_www_form({{ param.name.stringify }}, %params)
+                      rescue ex : Kemal::ParamError
                         %any_cast_error = true
                         ex
                       end
-                    end
-                  {% else %}
-                    {{ param.internal_name.id }} = begin
-                      {{ type }}.from_www_form({{ param.name.stringify }}, %params)
-                    rescue ex : Kemal::ParamError
-                      %any_cast_error = true
-                      ex
-                    end
+                    {% end %}
+
+                    {% strip = ann[:strip] %}
+                    {% if strip && (strip == true || strip.includes?(param.internal_name.id.symbolize)) %}
+                      {{ param.internal_name.id }} = {{ param.internal_name.id }}.strip if {{ param.internal_name.id }}.responds_to?(:strip)
+                    {% end %}
                   {% end %}
 
-                  {% strip = ann[:strip] %}
-                  {% if strip && (strip == true || strip.includes?(param.internal_name.id.symbolize)) %}
-                    {{ param.internal_name.id }} = {{ param.internal_name.id }}.strip if {{ param.internal_name.id }}.responds_to?(:strip)
-                  {% end %}
-                {% end %}
-
-                if %any_cast_error
-                  %controller.{{method.name.id}}_on_cast_error({% for param in method.args %}{{ param.internal_name.id }}, {% end %})
-                else
-                  %controller.{{method.name.id}}({% for param in method.args %}{{ param.internal_name.id }}.as({{ param.restriction.resolve }}), {% end %})
+                  if %any_cast_error
+                    %controller.{{method.name.id}}_on_cast_error({% for param in method.args %}{{ param.internal_name.id }}, {% end %})
+                  else
+                    %controller.{{method.name.id}}({% for param in method.args %}{{ param.internal_name.id }}.as({{ param.restriction.resolve }}), {% end %})
+                  end
+                rescue %halt : Kemal::Controller::Halt
+                  ctx.response.status_code = %halt.status_code
+                  %halt.response
                 end
               end
             {% end %}
@@ -291,30 +425,36 @@ module Kemal
                 end
               {% end %}
 
-              %params = Kemal.parse_www_form(ctx)
-              {% for param in method.args %}
-                {% if !param.restriction %}
-                  {% raise "Parameter '#{param.name}' in #{@type.name}##{method.name} must have an explicit type annotation, e.g. '#{param.name} : String'." %}
-                {% end %}
-                {% type = param.restriction.resolve %}
-                {% if param.default_value %}
-                  {{ param.internal_name.id }} = begin
-                    {{ type }}.from_www_form({{ param.name.stringify }}, %params)
-                  rescue ex : Kemal::ParamError
-                    raise ex unless ex.reason.missing?
-                    {{ param.default_value }}
-                  end
-                {% else %}
-                  {{ param.internal_name.id }} = {{ type }}.from_www_form({{ param.name.stringify }}, %params)
+              begin
+                %controller._run_before_all_filters
+
+                %params = Kemal.parse_www_form(ctx)
+                {% for param in method.args %}
+                  {% if !param.restriction %}
+                    {% raise "Parameter '#{param.name}' in #{@type.name}##{method.name} must have an explicit type annotation, e.g. '#{param.name} : String'." %}
+                  {% end %}
+                  {% type = param.restriction.resolve %}
+                  {% if param.default_value %}
+                    {{ param.internal_name.id }} = begin
+                      {{ type }}.from_www_form({{ param.name.stringify }}, %params)
+                    rescue ex : Kemal::ParamError
+                      raise ex unless ex.reason.missing?
+                      {{ param.default_value }}
+                    end
+                  {% else %}
+                    {{ param.internal_name.id }} = {{ type }}.from_www_form({{ param.name.stringify }}, %params)
+                  {% end %}
+
+                  {% strip = ws_ann[:strip] %}
+                  {% if strip && (strip == true || strip.includes?(param.internal_name.id.symbolize)) %}
+                    {{ param.internal_name.id }} = {{ param.internal_name.id }}.strip if {{ param.internal_name.id }}.responds_to?(:strip)
+                  {% end %}
                 {% end %}
 
-                {% strip = ws_ann[:strip] %}
-                {% if strip && (strip == true || strip.includes?(param.internal_name.id.symbolize)) %}
-                  {{ param.internal_name.id }} = {{ param.internal_name.id }}.strip if {{ param.internal_name.id }}.responds_to?(:strip)
-                {% end %}
-              {% end %}
-
-              %controller.{{method.name.id}}({% for param in method.args %}{{ param.internal_name.id }}, {% end %})
+                %controller.{{method.name.id}}({% for param in method.args %}{{ param.internal_name.id }}, {% end %})
+              rescue %halt : Kemal::Controller::Halt
+                %socket.close(HTTP::WebSocket::CloseCode::PolicyViolation, %halt.response.presence || "Halted")
+              end
             end
           {% end %}
         {% end %}
@@ -340,6 +480,22 @@ module Kemal
                 {% end %}
               {% end %}
             {% end %}
+          {% end %}
+
+          {% filters = @type.methods.select { |m| m.name.starts_with?("__before_all_") } %}
+          {% unless filters.empty? %}
+            # Runs this controller's `before_all` filters, in declaration order.
+            #
+            # `super` first, so an abstract parent controller's filters run before
+            # the ones declared here.
+            #
+            # :nodoc:
+            def _run_before_all_filters : Nil
+              super
+              {% for filter in filters %}
+                {{ filter.name.id }}
+              {% end %}
+            end
           {% end %}
         {% end %}
       end
