@@ -172,12 +172,12 @@ end
 
 ### Authenticated/protected routes
 
-If you need to protect some routes with authentication you must set the `auth`
-flag to true in the method annotation and implement the `authenticate! : Bool`
-method in your controller.
+To protect a route, set `auth: true` on its annotation and implement
+`authenticate! : Bool` in the controller.
 
-If `authenticate!` returns false the request will be halted and no further
-processing will be done, status code is set to 401 (Unauthorized).
+If it returns false, the request halts with a 401 — unless `authenticate!`
+already set its own status (e.g. via `redirect` or `response.status_code =`),
+which is kept instead.
 
 ```Crystal
 struct AdminController < Kemal::Controller
@@ -187,11 +187,10 @@ struct AdminController < Kemal::Controller
   end
 
   def authenticate! : Bool
-    if !current_user.try(&.current_user.admin?)
-      redirect("/login")
-      return false
-    end
-    true
+    return true if session.string?("role") == "admin"
+
+    redirect("/login")
+    false
   end
 end
 ```

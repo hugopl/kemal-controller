@@ -84,11 +84,16 @@ private struct TestController < Kemal::Controller
   end
 
   def authenticate! : Bool
-    if request.headers["Authorization"]? != "SecretToken"
+    return true if request.headers["Authorization"]? == "SecretToken"
+
+    if request.query_params["redirect_unauthenticated"]?
+      redirect("/login")
+    elsif request.query_params["htmx_unauthenticated"]?
+      response.headers["HX-Redirect"] = "/login"
+    else
       response.status_code = 401
-      return false
     end
-    true
+    false
   end
 end
 
@@ -228,6 +233,24 @@ describe Kemal::Controller do
     response.status_code.should eq(401)
 
     get("/area51", HTTP::Headers{"Authorization" => "SecretToken"})
+    response.body.should eq("You found area 51!")
+  end
+
+  it "keeps the status code authenticate! set for itself instead of overwriting it with 401" do
+    get("/area51?redirect_unauthenticated=1")
+    response.status_code.should eq(302)
+    response.headers["Location"].should eq("/login")
+
+    get("/area51?redirect_unauthenticated=1", HTTP::Headers{"Authorization" => "SecretToken"})
+    response.body.should eq("You found area 51!")
+  end
+
+  it "keeps the status code authenticate! set for itself even when it matches the ambient default, as long as it changed a header" do
+    get("/area51?htmx_unauthenticated=1")
+    response.status_code.should eq(200)
+    response.headers["HX-Redirect"].should eq("/login")
+
+    get("/area51?htmx_unauthenticated=1", HTTP::Headers{"Authorization" => "SecretToken"})
     response.body.should eq("You found area 51!")
   end
 

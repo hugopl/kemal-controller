@@ -95,6 +95,25 @@ module Kemal
   # end
   # ```
   #
+  # `authenticate!` can also take over the response itself, e.g. to redirect instead of
+  # replying with 401:
+  #
+  # ```
+  # def authenticate! : Bool
+  #   return true if session.string?("user")
+  #   redirect("/login")
+  #   false
+  # end
+  # ```
+  #
+  # kemal-controller only sets the 401 status when `authenticate!` returns `false` and hasn't
+  # already changed the response's status code or added a response header (e.g. via `redirect`,
+  # `response.status_code =`, or setting a new response header directly). This still works when
+  # `authenticate!` responds with the same status the response already had (e.g. it wants to
+  # reply 200 with an `HX-Redirect` header for an htmx request), since a header was added.
+  # Overwriting the *value* of a header that was already present, without changing the status or
+  # adding a new header, isn't detected as taking over the response.
+  #
   # ## Example with `before_all` Filters
   #
   # `before_all` registers methods to run before every route declared in the same controller
@@ -342,8 +361,12 @@ module Kemal
                 %controller = {{ @type.id }}.new(ctx)
 
                 {% if ann[:auth] == true %}
+                  %status_before_auth = ctx.response.status_code
+                  %header_count_before_auth = ctx.response.headers.size
                   if !%controller.authenticate!
-                    ctx.response.status_code = 401
+                    if ctx.response.status_code == %status_before_auth && ctx.response.headers.size == %header_count_before_auth
+                      ctx.response.status_code = 401
+                    end
                     next
                   end
                 {% end %}

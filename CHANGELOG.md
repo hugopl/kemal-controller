@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- When `authenticate!` returns `false`, kemal-controller only sets the response status to 401 if
+  `authenticate!` hasn't already changed the response itself (e.g. by calling `redirect`, setting
+  `response.status_code =` directly, or adding a response header). Previously the 401 always
+  overwrote whatever status `authenticate!` had set, and detection only looked at the status code,
+  so an `authenticate!` that intentionally replied with the same status the response already had
+  (e.g. 200, to set an `HX-Redirect` header for an htmx request) still got forced to 401.
+
 ### Added
 
 - `before_all` macro to register methods that run before every route declared in a controller struct.
