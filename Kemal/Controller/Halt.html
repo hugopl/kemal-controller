@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Crystal Docs 1.20.3">
+<meta name="crystal_docs.project_version" content="main">
+<meta name="crystal_docs.project_name" content="kemal-controller">
+
+
+
+<link href="../../css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../js/doc.js"></script>
+
+  <meta name="repository-name" content="kemal-controller">
+  <title>Kemal::Controller::Halt - kemal-controller main</title>
+  <script type="text/javascript">
+    CrystalDocs.base_path = "../../";
+  </script>
+</head>
+<body>
+
+<svg class="hidden">
+  <symbol id="octicon-link" viewBox="0 0 16 16">
+    <path fill="currentColor" fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
+  </symbol>
+</svg>
+<input type="checkbox" id="sidebar-btn">
+<label for="sidebar-btn" id="sidebar-btn-label">
+  <svg class="open" xmlns="http://www.w3.org/2000/svg" height="2em" width="2em" viewBox="0 0 512 512"><title>Open Sidebar</title><path fill="currentColor" d="M80 96v64h352V96H80zm0 112v64h352v-64H80zm0 112v64h352v-64H80z"></path></svg>
+  <svg class="close" xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 512 512"><title>Close Sidebar</title><path fill="currentColor" d="m118.6 73.4-45.2 45.2L210.7 256 73.4 393.4l45.2 45.2L256 301.3l137.4 137.3 45.2-45.2L301.3 256l137.3-137.4-45.2-45.2L256 210.7Z"></path></svg>
+</label>
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="search-box">
+      <input type="search" class="search-input" placeholder="Search..." spellcheck="false" aria-label="Search">
+    </div>
+
+    <div class="project-summary">
+      <h1 class="project-name">
+        <a href="../../index.html">
+          kemal-controller
+        </a>
+      </h1>
+
+      <span class="project-version">
+        main
+      </span>
+    </div>
+  </div>
+
+  <div class="search-results hidden">
+    <ul class="search-list"></ul>
+  </div>
+
+  <div class="types-list">
+    <ul>
+  
+  <li class="parent open current" data-id="kemal-controller/Kemal" data-name="kemal">
+      <a href="../../Kemal.html">Kemal</a>
+      
+        <ul>
+  
+  <li class="parent open current" data-id="kemal-controller/Kemal/Controller" data-name="kemal::controller">
+      <a href="../../Kemal/Controller.html">Controller</a>
+      
+        <ul>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Delete" data-name="kemal::controller::delete">
+      <a href="../../Kemal/Controller/Delete.html">Delete</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Errors" data-name="kemal::controller::errors">
+      <a href="../../Kemal/Controller/Errors.html">Errors</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Get" data-name="kemal::controller::get">
+      <a href="../../Kemal/Controller/Get.html">Get</a>
+      
+    </li>
+  
+  <li class=" current" data-id="kemal-controller/Kemal/Controller/Halt" data-name="kemal::controller::halt">
+      <a href="../../Kemal/Controller/Halt.html">Halt</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Head" data-name="kemal::controller::head">
+      <a href="../../Kemal/Controller/Head.html">Head</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Options" data-name="kemal::controller::options">
+      <a href="../../Kemal/Controller/Options.html">Options</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Patch" data-name="kemal::controller::patch">
+      <a href="../../Kemal/Controller/Patch.html">Patch</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Post" data-name="kemal::controller::post">
+      <a href="../../Kemal/Controller/Post.html">Post</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/Put" data-name="kemal::controller::put">
+      <a href="../../Kemal/Controller/Put.html">Put</a>
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Controller/WebSocket" data-name="kemal::controller::websocket">
+      <a href="../../Kemal/Controller/WebSocket.html">WebSocket</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class="parent " data-id="kemal-controller/Kemal/ParamError" data-name="kemal::paramerror">
+      <a href="../../Kemal/ParamError.html">ParamError</a>
+      
+        <ul>
+  
+  <li class=" " data-id="kemal-controller/Kemal/ParamError/Reason" data-name="kemal::paramerror::reason">
+      <a href="../../Kemal/ParamError/Reason.html">Reason</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class=" " data-id="kemal-controller/Kemal/Routes" data-name="kemal::routes">
+      <a href="../../Kemal/Routes.html">Routes</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+</ul>
+
+  </div>
+</div>
+
+
+<div class="main-content">
+<h1 class="type-name">
+
+  <span class="kind">
+    class
+  </span> Kemal::<wbr>Controller::<wbr>Halt
+
+</h1>
+
+
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Kemal/Controller/Halt.html">Kemal::Controller::Halt</a></li><li class="superclass">Exception</li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
+
+
+
+
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>Raised by <code>halt</code> to abort the current request.</p>
+<p>The generated route handler rescues it, applies <code><a href="../../Kemal/Controller/Halt.html#status_code%3AInt32-instance-method">#status_code</a></code> to the response and
+returns <code><a href="../../Kemal/Controller/Halt.html#response%3AString-instance-method">#response</a></code> as the body. WebSocket routes close the socket with
+<code>HTTP::WebSocket::CloseCode::PolicyViolation</code> instead, using <code><a href="../../Kemal/Controller/Halt.html#response%3AString-instance-method">#response</a></code> as the reason.</p>
+<p>Raise it directly when <code>halt</code> isn't in scope, e.g. from a helper defined in an
+included module rather than in the controller itself:</p>
+<pre><code class="language-crystal">raise <span class="t">Kemal</span><span class="t">::</span><span class="t">Controller</span><span class="t">::</span><span class="t">Halt</span>.new(<span class="n">403</span>, <span class="s">&quot;Forbidden&quot;</span>)</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2>
+    <a id="defined-in" class="anchor" href="#defined-in">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Defined in:
+  </h2>
+  
+    
+      <a href="https://github.com/hugopl/kemal-controller/blob/196941c664d0ee066b1a6f9c7bdd7c0425e27d0d/src/kemal/controller.cr#L253" target="_blank">
+        kemal/controller.cr
+      </a>
+    
+    <br/>
+  
+
+
+
+
+
+  
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructors
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#new%28status%3AHTTP%3A%3AStatus%7CInt32%3D200%2Cresponse%3AString%3D%22%22%29-class-method" class="signature"><strong>.new</strong>(status : HTTP::Status | Int32 = <span class="n">200</span>, response : String = <span class="s">&quot;&quot;</span>)</a>
+        
+      </li>
+    
+  </ul>
+
+
+  
+
+  
+
+  
+  <h2>
+    <a id="instance-method-summary" class="anchor" href="#instance-method-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#response%3AString-instance-method" class="signature"><strong>#response</strong> : String</a>
+        
+          <div class="summary"><p>The response body, or the WebSocket close reason.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#status_code%3AInt32-instance-method" class="signature"><strong>#status_code</strong> : Int32</a>
+        
+          <div class="summary"><p>The HTTP status code to respond with.</p></div>
+        
+      </li>
+    
+  </ul>
+
+
+
+  <div class="methods-inherited">
+    
+      
+
+
+      
+
+
+      
+
+
+      
+
+
+    
+      
+
+
+      
+
+
+      
+
+
+      
+
+
+    
+      
+
+
+      
+
+
+      
+
+
+      
+
+
+    
+  </div>
+
+  
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="new(status:HTTP::Status|Int32=200,response:String=&quot;&quot;)-class-method">
+      <div class="signature">
+        
+        def self.<strong>new</strong>(status : HTTP::Status | Int32 = <span class="n">200</span>, response : String = <span class="s">&quot;&quot;</span>)
+
+        <a class="method-permalink" href="#new%28status%3AHTTP%3A%3AStatus%7CInt32%3D200%2Cresponse%3AString%3D%22%22%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/196941c664d0ee066b1a6f9c7bdd7c0425e27d0d/src/kemal/controller.cr#L260" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+  
+
+  
+
+  
+  <h2>
+    <a id="instance-method-detail" class="anchor" href="#instance-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="response:String-instance-method">
+      <div class="signature">
+        
+        def <strong>response</strong> : String
+
+        <a class="method-permalink" href="#response%3AString-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>The response body, or the WebSocket close reason.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/196941c664d0ee066b1a6f9c7bdd7c0425e27d0d/src/kemal/controller.cr#L258" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="status_code:Int32-instance-method">
+      <div class="signature">
+        
+        def <strong>status_code</strong> : Int32
+
+        <a class="method-permalink" href="#status_code%3AInt32-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>The HTTP status code to respond with.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/hugopl/kemal-controller/blob/196941c664d0ee066b1a6f9c7bdd7c0425e27d0d/src/kemal/controller.cr#L255" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+
+</div>
+
+</body>
+</html>
