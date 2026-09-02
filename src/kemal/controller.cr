@@ -507,7 +507,7 @@ module Kemal
             {% end %}
           {% end %}
 
-          {% filters = @type.methods.select { |m| m.name.starts_with?("__before_all_") } %}
+          {% filters = @type.methods.select(&.name.starts_with?("__before_all_")) %}
           {% unless filters.empty? %}
             # Runs this controller's `before_all` filters, in declaration order.
             #
