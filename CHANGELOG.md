@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.5.0] - 2026-09-02
 
 ### Changed
 
@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   to `true` or `false`; omitting the key fails the build instead of silently defaulting to public. Off by
   default, so existing code is unaffected until opted in.
 
-## 0.4.0 - 2026-08-17
+## [0.4.0] - 2026-08-17
 
 ### Added
 
@@ -68,7 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A nilable parameter sent with an empty value (e.g. `?number=` for `number : Int32?`) is now `nil` instead
   of raising a `CastError`. `String?` still reads an empty value as `""`.
 
-## 0.3.0 - 2026-08-02
+## [0.3.0] - 2026-08-02
 
 ### Added
 
