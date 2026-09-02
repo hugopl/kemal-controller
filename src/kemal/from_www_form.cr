@@ -231,7 +231,7 @@ def NamedTuple.from_www_form(name : String, params : Kemal::WWWForm, offset : In
     if !key_{{ key }}_initialized
     {% if @type[key].nilable? %}
       key_{{ key }} = nil
-    {% elsif @type[key] < Array %}
+    {% elsif @type[key] < Array || @type[key] < Hash %}
       key_{{ key }} = {{ @type[key] }}.new
     {% else %}
       raise Kemal::ParamError.new("{{ key }}", :missing)
@@ -246,6 +246,30 @@ def NamedTuple.from_www_form(name : String, params : Kemal::WWWForm, offset : In
     {% end %}
   )
   {% end %}
+end
+
+# :nodoc:
+def Hash.from_www_form(name : String, params : Kemal::WWWForm, offset : Int32 = 0) : Hash(K, V)
+  {% raise "Only Hash with String keys is supported, got Hash(#{K}, #{V})" unless K == String %}
+
+  hash = Hash(String, V).new
+  key_prefix = name + "["
+  params.each(within: offset..) do |key, _value, fetched|
+    if !fetched
+      if key.starts_with?(key_prefix) && (close = key.index(']', key_prefix.size))
+        hash_key = key[key_prefix.size...close]
+        if !hash_key.empty?
+          break if hash.has_key?(hash_key) # Probably reading an array of hashes, so this starts a new element.
+
+          hash[hash_key] = V.from_www_form(key_prefix + hash_key + "]", params, offset)
+        end
+      elsif !hash.empty?
+        break
+      end
+    end
+    offset += 1
+  end
+  hash
 end
 
 # :nodoc:

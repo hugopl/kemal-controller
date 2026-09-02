@@ -73,6 +73,10 @@ Kemal-controller interprets the form keys almost like Rails does:
 - `items[][id]=1&items[][quantity]=2&items[][id]=3&items[][quantity]=4` becomes `items : Array(NamedTuple(id : Int32, quantity : Int32))`
 - `name=John` becomes `name : String`
 
+A `NamedTuple` fixes the accepted keys at compile time; use a `Hash` when the keys are only known at
+runtime, e.g. `opts[width]=800&opts[height]=600` becomes `opts : Hash(String, Int32)`. Only `String`
+keys are supported, any other key type is a compile-time error.
+
 ### Supported types
 
 - String
@@ -82,6 +86,7 @@ Kemal-controller interprets the form keys almost like Rails does:
 - Bool
 - NamedTuple (with nested support)
 - Array (with nested support)
+- Hash with String keys (with nested support)
 - Nilable versions of the above types
 
 More types may be added in the future, feel free to open an issue or a PR if you need something specific.

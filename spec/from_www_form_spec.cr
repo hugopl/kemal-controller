@@ -307,6 +307,106 @@ describe "#from_www_form" do
     end
   end
 
+  describe "Hash.from_www_form" do
+    it "can parse hash params" do
+      params = [{"opts[a]", "1", false}, {"opts[b]", "2", false}]
+      Hash(String, String).from_www_form("opts", params).should eq({"a" => "1", "b" => "2"})
+    end
+
+    it "casts values to the value type" do
+      params = [{"opts[a]", "1", false}, {"opts[b]", "2", false}]
+      Hash(String, Int32).from_www_form("opts", params).should eq({"a" => 1, "b" => 2})
+    end
+
+    it "returns an empty hash when no param matches" do
+      params = [{"other", "1", false}]
+      Hash(String, String).from_www_form("opts", params).should eq({} of String => String)
+    end
+
+    it "ignores keys of other params" do
+      params = [{"opts[a]", "1", false}, {"opt[b]", "2", false}, {"opts", "3", false}]
+      Hash(String, String).from_www_form("opts", params).should eq({"a" => "1"})
+    end
+
+    it "ignores empty keys" do
+      params = [{"opts[]", "1", false}, {"opts[a]", "2", false}]
+      Hash(String, String).from_www_form("opts", params).should eq({"a" => "2"})
+    end
+
+    it "raises when a value cannot be casted" do
+      params = [{"opts[a]", "foo", false}]
+      expect_raises(Kemal::ParamError, "Invalid value \"foo\" for parameter 'opts[a]'") do
+        Hash(String, Int32).from_www_form("opts", params)
+      end
+    end
+
+    it "handles arrays as values" do
+      params = [
+        {"opts[a][]", "1", false},
+        {"opts[a][]", "2", false},
+        {"opts[b][]", "3", false},
+      ]
+      Hash(String, Array(Int32)).from_www_form("opts", params).should eq({"a" => [1, 2], "b" => [3]})
+    end
+
+    it "handles named tuples as values" do
+      params = [
+        {"opts[a][name]", "John", false},
+        {"opts[a][age]", "30", false},
+        {"opts[b][name]", "Mary", false},
+        {"opts[b][age]", "25", false},
+      ]
+      Hash(String, NamedTuple(name: String, age: Int32)).from_www_form("opts", params).should eq({
+        "a" => {name: "John", age: 30},
+        "b" => {name: "Mary", age: 25},
+      })
+    end
+
+    it "handles nested hashes" do
+      params = [{"opts[a][x]", "1", false}, {"opts[a][y]", "2", false}, {"opts[b][z]", "3", false}]
+      Hash(String, Hash(String, String)).from_www_form("opts", params).should eq({
+        "a" => {"x" => "1", "y" => "2"},
+        "b" => {"z" => "3"},
+      })
+    end
+
+    it "handles nilable value types" do
+      params = [{"opts[a]", "", false}, {"opts[b]", "2", false}]
+      Hash(String, Int32?).from_www_form("opts", params).should eq({"a" => nil, "b" => 2})
+    end
+
+    it "handles a nilable hash" do
+      params = [{"other", "1", false}]
+      Hash(String, String)?.from_www_form("opts", params).should eq({} of String => String)
+    end
+
+    it "handles a hash inside a named tuple" do
+      params = [{"key[name]", "John", false}, {"key[opts][a]", "1", false}]
+      NamedTuple(name: String, opts: Hash(String, String)).from_www_form("key", params).should eq(
+        {name: "John", opts: {"a" => "1"}}
+      )
+    end
+
+    it "handles a missing hash inside a named tuple" do
+      params = [{"key[name]", "John", false}]
+      NamedTuple(name: String, opts: Hash(String, String)).from_www_form("key", params).should eq(
+        {name: "John", opts: {} of String => String}
+      )
+    end
+
+    it "handles an array of hashes" do
+      params = [
+        {"items[][a]", "1", false},
+        {"items[][b]", "2", false},
+        {"items[][a]", "3", false},
+      ]
+      Array(Hash(String, String)).from_www_form("items", params).should eq([
+        {"a" => "1", "b" => "2"},
+        {"a" => "3"},
+      ])
+    end
+  end
+
   describe "Array of NamedTuple" do
     it "can parse array of named tuple params" do
       params = [

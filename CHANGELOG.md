@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Support for `Hash` parameters with `String` keys, e.g. `opts[width]=800&opts[height]=600` maps to
+  `opts : Hash(String, Int32)`. Values may be any other supported type, including arrays, named
+  tuples and nested hashes. A missing hash parameter yields an empty hash. Hash keys other than
+  `String` are a compile-time error.
 - `before_all` macro to register methods that run before every route declared in a controller struct.
   Accepts symbols, bare names or strings, may be called more than once, and composes through
   inheritance from an `abstract struct` controller. Filters run in declaration order, after

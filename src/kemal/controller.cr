@@ -39,6 +39,7 @@ module Kemal
   # - Bool
   # - Array (with nested support)
   # - NamedTuple (with nested support)
+  # - Hash with String keys (with nested support)
   # - Nilable versions of the above
   #
   # ## Parameter Mapping
@@ -47,6 +48,7 @@ module Kemal
   # - `item[foo]=bar` becomes `item : NamedTuple(foo: String)`
   # - `items[]=1&items[]=2` becomes `items : Array(Int32)`
   # - `items[][id]=1&items[][quantity]=2` becomes `items : Array(NamedTuple(id: Int32, quantity: Int32))`
+  # - `opts[width]=800&opts[height]=600` becomes `opts : Hash(String, Int32)`, for keys only known at runtime
   #
   # A parameter's external name (the one looked up in the request) can differ from the name used in the
   # method body by giving it an internal name, same as any other Crystal method. This is required when the

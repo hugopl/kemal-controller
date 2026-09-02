@@ -51,6 +51,11 @@ private struct TestController < Kemal::Controller
     items.map { |item| "Name: #{item[:name]}, Age: #{item[:age]}" }.join(", ")
   end
 
+  @[Post("/hashes")]
+  def hashes(opts : Hash(String, Int32))
+    opts.map { |key, value| "#{key}=#{value}" }.join(", ")
+  end
+
   @[Post("/named_tuple_with_array")]
   def named_tuple_with_array(data : NamedTuple(names: Array(String), scores: Array(Int32)))
     names = data[:names].join("|")
@@ -135,6 +140,19 @@ describe Kemal::Controller do
 
   it "can handle empty array" do
     post("/array_of_named_tuples")
+    response.body.should eq("")
+  end
+
+  it "can handle hashes from POST parameters" do
+    post("/hashes", {
+      {"opts[width]", "800"},
+      {"opts[height]", "600"},
+    })
+    response.body.should eq("width=800, height=600")
+  end
+
+  it "can handle an empty hash" do
+    post("/hashes")
     response.body.should eq("")
   end
 
